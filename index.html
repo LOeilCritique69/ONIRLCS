@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>OniRLCS — Mes Prédictions RLCS</title>
+  <meta name="description" content="Suivi personnel des prédictions RLCS saison 2025–2026 : scores, résultats par tournoi, taux de réussite global.">
+  <meta name="author" content="Yanis (Oni)">
+  <meta name="theme-color" content="#0e1220">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="OniRLCS — Mes Prédictions">
+  <meta property="og:description" content="Suivi des prédictions RLCS 2025–2026, Major par Major.">
+  <meta property="og:image" content="/img/og-preview.png">
+  <meta property="og:locale" content="fr_FR">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/worlds2025.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/worlds2025.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Aller au contenu principal</a>
+
+  <div class="page-shell">
+    <header class="site-header" role="banner">
+      <div class="header-title">
+        <p class="eyebrow" aria-hidden="true">RLCS Prediction Tracker</p>
+        <h1>Oni<span>RLCS</span></h1>
+        <p class="sub" aria-label="Suivi de prédictions, saisons 2025 et 2026">
+          Predictions &bull; 2025–2026
+        </p>
+      </div>
+
+      <aside class="header-stats" id="global-stats" aria-label="Statistiques globales de prédiction"></aside>
+    </header>
+
+    <div class="toolbar">
+      <div class="category-nav-wrap">
+        <nav class="category-nav" aria-label="Filtrer par saison">
+          <button class="category-btn active" data-category="2025" aria-pressed="true">Saison 2025</button>
+          <button class="category-btn" data-category="2026" aria-pressed="false">Saison 2026</button>
+        </nav>
+      </div>
+
+      <div class="nav-wrap">
+        <nav class="nav" id="main-nav" aria-label="Sélectionner un tournoi"></nav>
+      </div>
+    </div>
+
+    <main id="main-content" tabindex="-1"></main>
+  </div>
+
+  <div id="lightbox" role="dialog" aria-modal="true" aria-label="Vue agrandie de l'image" aria-hidden="true">
+    <button id="lightbox-close" type="button" aria-label="Fermer (Échap)">✕</button>
+
+    <figure class="lightbox-figure">
+      <img id="lightbox-img" src="" alt="">
+      <figcaption id="lightbox-label" aria-live="polite"></figcaption>
+    </figure>
+
+    <nav id="lightbox-nav" aria-label="Navigation entre images">
+      <button class="lb-nav-btn" id="lb-prev" type="button" aria-label="Image précédente (←)">← Préc.</button>
+      <span class="lb-counter" id="lb-counter" aria-live="polite" aria-atomic="true"></span>
+      <button class="lb-nav-btn" id="lb-next" type="button" aria-label="Image suivante (→)">Suiv. →</button>
+    </nav>
+  </div>
+
+  <script src="id.js" defer></script>
+  <script src="data.js" defer></script>
+</body>
+</html>

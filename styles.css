@@ -1,0 +1,1003 @@
+/* ==========================================================================
+   styles.css — OniRLCS Prediction Tracker
+   Sections :
+     1.  Variables & Reset
+     2.  Layout global (page-shell, skip-link)
+     3.  En-tête (site-header, eyebrow, h1, header-stats)
+     4.  Toolbar : catégories & navigation tournois
+     5.  Contenu principal (#main-content, category-section)
+     6.  Page tournoi (.t-top, .t-banner, .t-info-bar)
+     7.  Métadonnées tournoi (type, statut, champion)
+     8.  Score widget
+     9.  Onglets de phases (phase-tabs, phase-panel)
+     10. Galerie (gallery-grid, gallery-card, lightbox)
+     11. Animations & accessibilité
+     12. Responsive (980 px, 640 px)
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. VARIABLES & RESET
+   -------------------------------------------------------------------------- */
+
+:root {
+  /* Couleurs */
+  --bg:        #08111f;
+  --panel:     rgba(14, 18, 32, 0.82);
+  --panel-2:   rgba(20, 27, 46, 0.9);
+  --surface:   #10192c;
+  --surface-2: #18253d;
+  --text:      #eef3ff;
+  --muted:     #94a3b8;
+  --line:      rgba(255,255,255,.08);
+  --accent:    #7c5cff;
+  --accent-2:  #22d3ee;
+  --ok:        #2ce6a6;
+  --flash:     #67e8f9;
+  --ko:        #ff5c8a;
+
+  /* Effets */
+  --shadow:    0 18px 50px rgba(0,0,0,.35);
+  --radius:    18px;
+  --radius-sm: 12px;
+  --transition: 180ms ease;
+
+  /* Typographie */
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-sans:    'Inter', system-ui, sans-serif;
+  --font-mono:    'IBM Plex Mono', monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  color: var(--text);
+  background:
+    radial-gradient(circle at top left,  rgba(124,92,255,.18), transparent 32%),
+    radial-gradient(circle at top right, rgba(34,211,238,.12), transparent 28%),
+    linear-gradient(180deg, #07101d, #0a1324, #060b14);
+  position: relative;
+}
+
+/* Grille de fond subtile */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: linear-gradient(180deg, rgba(0,0,0,.35), transparent 85%);
+  -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,.35), transparent 85%);
+  z-index: -1;
+}
+
+
+/* --------------------------------------------------------------------------
+   2. LAYOUT GLOBAL
+   -------------------------------------------------------------------------- */
+
+.page-shell {
+  width: min(1400px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 1.25rem 0 2rem;
+}
+
+/* Lien d'accès rapide (accessibilité clavier) */
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 1000;
+  background: var(--accent);
+  color: #fff;
+  padding: 0.9rem 1.1rem;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: top var(--transition);
+}
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* Fond verre commun aux blocs principaux */
+.site-header,
+.category-nav-wrap,
+.nav-wrap,
+#main-content {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: var(--radius);
+}
+
+
+/* --------------------------------------------------------------------------
+   3. EN-TÊTE
+   -------------------------------------------------------------------------- */
+
+.site-header {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 2rem;
+  align-items: center;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+.site-header::after {
+  content: '';
+  position: absolute;
+  inset: auto auto -20% -10%;
+  width: 340px;
+  height: 340px;
+  background: radial-gradient(circle, rgba(124,92,255,.18), transparent 70%);
+  pointer-events: none;
+}
+
+.header-title {
+  position: relative;
+  z-index: 1;
+}
+
+/* Ligne supra-titre */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.85rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-2);
+}
+.eyebrow::before {
+  content: '';
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 18px var(--accent);
+}
+
+h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 7vw, 6.5rem);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+}
+h1 span {
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.sub {
+  margin-top: 0.8rem;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Statistiques globales */
+.header-stats {
+  display: grid;
+  gap: 1rem;
+  position: relative;
+  z-index: 1;
+}
+.hstat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.1rem;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(180deg, rgba(16,25,44,.92), rgba(12,18,31,.92));
+  border: 1px solid rgba(255,255,255,.06);
+}
+.hstat .lbl {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.hstat .val {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  line-height: 1;
+}
+.hstat:nth-child(1) .val { color: var(--flash); }
+.hstat:nth-child(2) .val { color: var(--ok); }
+
+
+/* --------------------------------------------------------------------------
+   4. TOOLBAR — CATÉGORIES & NAVIGATION TOURNOIS
+   -------------------------------------------------------------------------- */
+
+.toolbar {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin: 1rem 0 1.25rem;
+}
+
+.category-nav-wrap,
+.nav-wrap {
+  padding: 0.9rem;
+}
+
+/* Reset boutons commun */
+.category-btn,
+.nav-btn,
+.lb-nav-btn,
+#lightbox-close {
+  border: 0;
+  cursor: pointer;
+  font-family: var(--font-sans);
+}
+
+/* Boutons de catégorie (saison) */
+.category-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.category-btn {
+  padding: 0.85rem 1.25rem;
+  border-radius: 999px;
+  background: rgba(255,255,255,.04);
+  color: var(--muted);
+  font: 700 0.98rem var(--font-display);
+  letter-spacing: 0.03em;
+  transition:
+    transform     var(--transition),
+    background    var(--transition),
+    color         var(--transition),
+    box-shadow    var(--transition);
+}
+.category-btn:hover,
+.category-btn.active {
+  background: linear-gradient(90deg, rgba(124,92,255,.24), rgba(34,211,238,.16));
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
+}
+
+/* Navigation tournois */
+.nav-wrap {
+  background: rgba(10,16,29,.72);
+}
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+.nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.65rem 0.95rem;
+  border-radius: 999px;
+  background: rgba(255,255,255,.04);
+  color: var(--muted);
+  font: 600 0.95rem var(--font-sans);
+  transition:
+    transform     var(--transition),
+    background    var(--transition),
+    color         var(--transition),
+    box-shadow    var(--transition);
+}
+.nav-btn:hover,
+.nav-btn.active {
+  background: var(--surface-2);
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px rgba(124,92,255,.25);
+  transform: translateY(-1px);
+}
+
+/* Logo dans le bouton nav */
+.nav-logo {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,.35));
+}
+
+/* Badge de pourcentage dans le bouton nav */
+.nav-pct {
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(255,255,255,.08);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text);
+}
+
+/* Point "en cours" animé */
+.nav-live {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--ko);
+  box-shadow: 0 0 12px var(--ko);
+  animation: pulse 1.5s infinite;
+}
+
+
+/* --------------------------------------------------------------------------
+   5. CONTENU PRINCIPAL
+   -------------------------------------------------------------------------- */
+
+#main-content {
+  margin-top: 1rem;
+  padding: 1.25rem;
+}
+
+.category-section,
+.tournament-page {
+  display: none;
+}
+.category-section.active,
+.tournament-page.active {
+  display: block;
+  animation: fadeIn 0.35s ease;
+}
+
+
+/* --------------------------------------------------------------------------
+   6. PAGE TOURNOI — .t-top / .t-banner / .t-info-bar
+   -------------------------------------------------------------------------- */
+
+.t-top {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1.25rem;
+  overflow: hidden;
+  border-radius: calc(var(--radius) + 4px);
+  background: linear-gradient(180deg, rgba(16,25,44,.95), rgba(11,17,30,.95));
+  border: 1px solid var(--line);
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow);
+}
+
+/* Bandeau visuel gauche */
+.t-banner {
+  min-height: 210px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 1.5rem;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(124,92,255,.32), transparent 26%),
+    radial-gradient(circle at 80% 80%, rgba(34,211,238,.16), transparent 24%),
+    linear-gradient(135deg, #10172a 0%, #16233b 50%, #0a1020 100%);
+}
+.t-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+  background-size: 26px 26px;
+  opacity: 0.55;
+}
+.t-header-logo {
+  position: relative;
+  z-index: 1;
+  max-width: 88%;
+  max-height: 150px;
+  object-fit: contain;
+  filter: drop-shadow(0 18px 28px rgba(0,0,0,.6));
+}
+
+/* Barre d'info droite */
+.t-info-bar {
+  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  align-items: start;
+  background: linear-gradient(180deg, rgba(18,26,44,.98), rgba(13,18,31,.98));
+}
+.t-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+.t-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+.t-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: center;
+}
+.t-meta {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+
+/* --------------------------------------------------------------------------
+   7. MÉTADONNÉES TOURNOI — type, statut, champion
+   -------------------------------------------------------------------------- */
+
+/* Pill partagée */
+.tournament-type,
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.28rem 0.65rem;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tournament-type {
+  background: rgba(124,92,255,.18);
+  color: #fff;
+}
+
+.status-pill {
+  background: rgba(255,255,255,.04);
+}
+.status-pill .dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+}
+.status-pill.completed { color: var(--ok); }
+.status-pill.completed .dot { background: var(--ok); }
+.status-pill.ongoing   { color: var(--flash); }
+.status-pill.ongoing   .dot { background: var(--flash); }
+.status-pill.upcoming  { color: var(--muted); }
+.status-pill.upcoming  .dot { background: var(--muted); }
+
+/* Ligne champion */
+.champion-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.1rem;
+  margin-top: 1rem;
+  border-radius: var(--radius-sm);
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.06);
+}
+.champ-dot {
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 50%;
+}
+.champ-dot.correct { background: var(--ok);    box-shadow: 0 0 12px var(--ok); }
+.champ-dot.wrong   { background: var(--ko);    box-shadow: 0 0 12px var(--ko); }
+.champ-dot.unknown { background: var(--muted); }
+
+.champ-team-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.champ-label {
+  font: 500 0.7rem var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.champ-identity {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+.champ-team-logo {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+.champ-name {
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+.champ-real {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding-left: 1rem;
+  border-left: 1px solid rgba(255,255,255,.1);
+  font-weight: 600;
+  color: var(--muted);
+}
+
+
+/* --------------------------------------------------------------------------
+   8. SCORE WIDGET
+   -------------------------------------------------------------------------- */
+
+.score-widget {
+  min-width: 220px;
+  padding: 1.2rem;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(180deg, rgba(124,92,255,.12), rgba(255,255,255,.03));
+  border: 1px solid rgba(255,255,255,.08);
+  text-align: center;
+}
+
+/* Affichage fraction */
+.sw-fraction {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  line-height: 1;
+}
+.sw-denom {
+  font-size: 1.4rem;
+  color: rgba(238,243,255,.45);
+}
+.sw-pct {
+  margin: 0.25rem 0 0.8rem;
+  font: 700 0.95rem var(--font-mono);
+}
+
+/* Barre de progression */
+.sw-bar {
+  height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255,255,255,.08);
+  margin-bottom: 1rem;
+}
+.sw-bar-fill {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  transition: width 0.6s ease;
+}
+
+/* Message vide */
+.sw-empty {
+  font-style: italic;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+
+/* Bouton "saisir mon score" */
+.sw-edit {
+  padding: 0.55rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(255,255,255,.06);
+  color: var(--text);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  transition: transform var(--transition), background var(--transition);
+}
+.sw-edit:hover {
+  background: rgba(124,92,255,.28);
+  transform: translateY(-1px);
+}
+
+/* Mode édition (inputs + OK/Cancel) */
+.sw-input-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.45rem;
+}
+.sw-input-row input {
+  width: 52px;
+  padding: 0.55rem 0.4rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: var(--surface);
+  color: var(--text);
+  font: 700 1rem var(--font-mono);
+  text-align: center;
+}
+.sw-input-row button {
+  padding: 0.5rem 0.75rem;
+  border-radius: 10px;
+  font-weight: 700;
+}
+.sw-ok {
+  background: var(--ok);
+  color: #06111a;
+}
+.sw-cancel {
+  background: rgba(255,255,255,.08);
+  color: var(--text);
+}
+
+
+/* --------------------------------------------------------------------------
+   9. ONGLETS DE PHASES
+   -------------------------------------------------------------------------- */
+
+.phase-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0 0 1rem;
+  padding-bottom: 0.7rem;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.phase-tab {
+  position: relative;
+  padding: 0.72rem 1rem;
+  border-radius: 999px;
+  background: rgba(255,255,255,.04);
+  color: var(--muted);
+  font-weight: 700;
+  transition: var(--transition);
+}
+.phase-tab:hover,
+.phase-tab.active {
+  color: var(--text);
+  background: rgba(124,92,255,.18);
+}
+.phase-tab.active::after {
+  content: '';
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: -10px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+
+.phase-panel {
+  display: none;
+}
+.phase-panel.active {
+  display: block;
+  animation: fadeIn 0.35s ease;
+}
+
+
+/* --------------------------------------------------------------------------
+   10. GALERIE & LIGHTBOX
+   -------------------------------------------------------------------------- */
+
+/* Titre de section galerie */
+.gallery-section-title {
+  margin: 0 0 0.9rem;
+  font: 700 0.8rem var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Grille */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+/* Cartes */
+.gallery-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--panel-2);
+  border: 1px solid rgba(255,255,255,.06);
+  box-shadow: 0 10px 25px rgba(0,0,0,.24);
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.gallery-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(124,92,255,.35);
+  box-shadow: 0 16px 40px rgba(0,0,0,.42);
+}
+
+.gallery-card img {
+  width: 100%;
+  aspect-ratio: 16 / 11;
+  object-fit: cover;
+  object-position: top center;
+  background: #0b1020;
+  transition: transform 0.5s ease;
+}
+.gallery-card:hover img {
+  transform: scale(1.03);
+}
+
+/* Overlay zoom */
+.gc-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  background: linear-gradient(180deg, rgba(124,92,255,.22), rgba(34,211,238,.08));
+  transition: opacity 0.25s ease;
+}
+.gallery-card:hover .gc-overlay {
+  opacity: 1;
+}
+.gc-zoom-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #fff;
+  color: var(--bg);
+  font-size: 1.35rem;
+  box-shadow: 0 8px 24px rgba(0,0,0,.35);
+  transform: scale(0.92);
+  transition: transform 0.25s ease;
+}
+.gallery-card:hover .gc-zoom-icon {
+  transform: scale(1);
+}
+
+/* Légende et note */
+.gc-label {
+  padding: 1rem 1.1rem 0.8rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+}
+.gc-note {
+  margin-top: auto;
+  padding: 0.85rem 1.1rem;
+  background: rgba(255,255,255,.03);
+  border-top: 1px solid rgba(255,255,255,.06);
+  font: 500 0.8rem/1.55 var(--font-mono);
+  color: var(--muted);
+}
+.gc-note-icon {
+  margin-right: 0.35rem;
+  font-style: normal;
+}
+
+/* Badge statut (Terminé / En cours) */
+.results-badge {
+  position: absolute;
+  top: 0.9rem;
+  left: 0.9rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  font: 700 0.72rem var(--font-mono);
+  text-transform: uppercase;
+  z-index: 2;
+}
+.rb-correct { background: var(--ok);    color: #07121a; }
+.rb-ongoing { background: var(--flash); color: #07121a; }
+
+/* Carte sans image */
+.gallery-card.no-img {
+  min-height: 320px;
+  align-items: center;
+  justify-content: center;
+  background: repeating-linear-gradient(
+    135deg,
+    rgba(255,255,255,.04),  rgba(255,255,255,.04) 12px,
+    rgba(255,255,255,.02),  rgba(255,255,255,.02) 24px
+  );
+}
+.no-img-icon {
+  font-size: 2.8rem;
+  opacity: 0.45;
+  margin-bottom: 0.5rem;
+}
+
+/* Lightbox */
+#lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1.2rem;
+  background: rgba(5,8,15,.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+#lightbox.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#lightbox-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: rgba(255,255,255,.06);
+  color: var(--text);
+  font-size: 1.4rem;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+#lightbox-close:hover {
+  background: rgba(255,92,138,.22);
+  color: var(--ko);
+}
+
+.lightbox-figure {
+  margin: 0;
+  max-width: min(1100px, 92vw);
+  max-height: 74vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+#lightbox-img {
+  max-width: 100%;
+  max-height: 74vh;
+  object-fit: contain;
+  border-radius: 14px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.6);
+}
+#lightbox-label {
+  margin-top: 0.9rem;
+  max-width: 900px;
+  text-align: center;
+  font-weight: 600;
+  color: var(--text);
+}
+
+#lightbox-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+.lb-nav-btn {
+  padding: 0.7rem 1rem;
+  border-radius: 999px;
+  background: rgba(255,255,255,.06);
+  color: var(--text);
+  font-weight: 700;
+  transition: var(--transition);
+}
+.lb-nav-btn:hover {
+  background: rgba(124,92,255,.25);
+}
+.lb-counter {
+  font-family: var(--font-mono);
+  color: var(--muted);
+}
+
+
+/* --------------------------------------------------------------------------
+   11. ANIMATIONS & ACCESSIBILITÉ
+   -------------------------------------------------------------------------- */
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translate3d(0, 10px, 0); }
+  to   { opacity: 1; transform: translate3d(0,  0px, 0); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1);    opacity: 1; }
+  50%       { transform: scale(1.25); opacity: 0.55; }
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 3px;
+}
+
+
+/* --------------------------------------------------------------------------
+   12. RESPONSIVE
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 980px) {
+  .site-header,
+  .t-top,
+  .t-info-bar {
+    grid-template-columns: 1fr;
+  }
+  .site-header {
+    text-align: center;
+  }
+  .header-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+  .score-widget {
+    min-width: 0;
+    width: 100%;
+  }
+  .champion-row,
+  .champ-real {
+    justify-content: center;
+    border-left: 0;
+    padding-left: 0;
+  }
+  .gallery-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .page-shell {
+    width: calc(100% - 1rem);
+  }
+  .site-header,
+  #main-content,
+  .nav-wrap,
+  .category-nav-wrap {
+    padding: 1rem;
+  }
+  .hstat .val {
+    font-size: 2rem;
+  }
+  .category-nav,
+  .nav {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .category-nav::-webkit-scrollbar,
+  .nav::-webkit-scrollbar {
+    display: none;
+  }
+  .category-btn,
+  .nav-btn {
+    width: auto;
+    flex-shrink: 0;
+  }
+  .t-banner {
+    min-height: 160px;
+  }
+  .t-header-logo {
+    max-height: 110px;
+  }
+  .sw-fraction {
+    font-size: 2.4rem;
+  }
+  .gallery-card img,
+  .gc-overlay {
+    aspect-ratio: 16 / 10;
+  }
+}
