@@ -194,6 +194,7 @@ const TOURNAMENTS = [
   {
     id: 'paris', name: 'Paris', year: 2026, type: 'major', status: 'completed',
     logo: '/img/parispp.png', date: '20–24 mai 2026',
+    score: { correct: 27, total: 37 },
     champion: { pred: 'Karmine Corp', predLogo: '/teams/KC.png', result: 'Karmine Corp', resultLogo: '/teams/KC.png' },
     phases: [
       {
