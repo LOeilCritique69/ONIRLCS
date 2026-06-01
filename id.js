@@ -221,11 +221,11 @@ const TOURNAMENTS = [
   },
 
   {
-    id: '2V2 EU', name: '2v2 EU', year: 2026, type: 'qualifier', status: 'upcoming',
+    id: '2V2 EU', name: '2v2 EU', year: 2026, type: 'qualifier', status: 'ongoing',
     logo: '/img/worlds2025.png', date: '05–07 juin 2026',
     champion: { pred: 'TBD', predLogo: null, result: null, resultLogo: null },
     phases: [
-      { id: 'groups',   label: 'Group Stage', imgs: [] },
+      { id: 'groups',   label: 'Group Stage', imgs: [{ src: '/img/2V2-group-stage-predi.png',         label: 'Mes Prédictions Group Stage — 2v2 EU 2026', note: 'Prédiction avant le commencement des Groups Stage' }] },
       { id: 'playoffs', label: 'Playoffs',    imgs: [] },
       { id: 'ALL',      label: 'ALL',         imgs: [] },
     ],
