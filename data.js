@@ -173,6 +173,20 @@ function typeLabel(type) {
   return TYPE_LABELS[type] ?? 'Autre';
 }
 
+/**
+ * Résout le logo d'une équipe depuis le registre TEAMS.
+ * Recherche insensible à la casse en fallback.
+ * @param {string|null|undefined} name
+ * @returns {string|null}
+ */
+function getTeamLogo(name) {
+  if (!name) return null;
+  if (TEAMS[name]) return TEAMS[name];
+  const lower = name.toLowerCase();
+  const key = Object.keys(TEAMS).find(k => k.toLowerCase() === lower);
+  return key ? TEAMS[key] : null;
+}
+
 
 /* --------------------------------------------------------------------------
    5. LIGHTBOX
@@ -318,8 +332,10 @@ const Renderers = {
       ? 'unknown'
       : ch.pred === ch.result ? 'correct' : 'wrong';
 
-    const predLogo   = ch.predLogo   ? `<img src="${escAttr(ch.predLogo)}"   class="champ-team-logo" alt="" loading="lazy">` : '';
-    const resultLogo = ch.resultLogo ? `<img src="${escAttr(ch.resultLogo)}" class="champ-team-logo" alt="" loading="lazy">` : '';
+    const predLogoSrc   = getTeamLogo(ch.pred);
+    const resultLogoSrc = getTeamLogo(ch.result);
+    const predLogo   = predLogoSrc   ? `<img src="${escAttr(predLogoSrc)}"   class="champ-team-logo" alt="" loading="lazy">` : '';
+    const resultLogo = resultLogoSrc ? `<img src="${escAttr(resultLogoSrc)}" class="champ-team-logo" alt="" loading="lazy">` : '';
 
     const resultHTML = ch.result ? `
       <div class="champ-real">

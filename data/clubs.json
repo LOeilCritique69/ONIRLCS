@@ -1,0 +1,2002 @@
+[
+  {
+    "name": "Team BDS",
+    "image": "images\\clubs/Team_BDS.png"
+  },
+  {
+    "name": "Team Vitality",
+    "image": "images\\clubs/Team_Vitality.png"
+  },
+  {
+    "name": "NRG",
+    "image": "images\\clubs/NRG.png"
+  },
+  {
+    "name": "G2 Esports",
+    "image": "images\\clubs/G2_Esports.png"
+  },
+  {
+    "name": "Karmine Corp",
+    "image": "images\\clubs/Karmine_Corp.png"
+  },
+  {
+    "name": "Team Falcons",
+    "image": "images\\clubs/Team_Falcons.png"
+  },
+  {
+    "name": "FURIA",
+    "image": "images\\clubs/FURIA.png"
+  },
+  {
+    "name": "Spacestation Gaming",
+    "image": "images\\clubs/Spacestation_Gaming.png"
+  },
+  {
+    "name": "Dignitas",
+    "image": "images\\clubs/Dignitas.png"
+  },
+  {
+    "name": "FaZe Clan",
+    "image": "images\\clubs/FaZe_Clan.png"
+  },
+  {
+    "name": "Version1",
+    "image": "images\\clubs/Version1.png"
+  },
+  {
+    "name": "Gen.G Mobil1 Racing",
+    "image": "images\\clubs/Gen_G_Mobil1_Racing.png"
+  },
+  {
+    "name": "Cloud9",
+    "image": "images\\clubs/Cloud9.png"
+  },
+  {
+    "name": "Complexity Gaming",
+    "image": "images\\clubs/Complexity_Gaming.png"
+  },
+  {
+    "name": "Twisted Minds",
+    "image": "images\\clubs/Twisted_Minds.png"
+  },
+  {
+    "name": "Rule One",
+    "image": "images\\clubs/Rule_One.png"
+  },
+  {
+    "name": "Team Liquid",
+    "image": "images\\clubs/Team_Liquid.png"
+  },
+  {
+    "name": "Gentle Mates",
+    "image": "images\\clubs/Gentle_Mates.png"
+  },
+  {
+    "name": "Team Secret",
+    "image": "images\\clubs/Team_Secret.png"
+  },
+  {
+    "name": "Oxygen Esports",
+    "image": "images\\clubs/Oxygen_Esports.png"
+  },
+  {
+    "name": "Rogue",
+    "image": "images\\clubs/Rogue.png"
+  },
+  {
+    "name": "Guild Esports",
+    "image": "images\\clubs/Guild_Esports.png"
+  },
+  {
+    "name": "ENVY",
+    "image": "images\\clubs/ENVY.png"
+  },
+  {
+    "name": "Moist Esports",
+    "image": "images\\clubs/Moist_Esports.png"
+  },
+  {
+    "name": "Geekay Esports",
+    "image": "images\\clubs/Geekay_Esports.png"
+  },
+  {
+    "name": "Ground Zero Gaming",
+    "image": "images\\clubs/Ground_Zero_Gaming.png"
+  },
+  {
+    "name": "Endpoint",
+    "image": "images\\clubs/Endpoint.png"
+  },
+  {
+    "name": "PWR",
+    "image": "images\\clubs/PWR.png"
+  },
+  {
+    "name": "Pioneers",
+    "image": "images\\clubs/Pioneers.png"
+  },
+  {
+    "name": "Shopify Rebellion",
+    "image": "images\\clubs/Shopify_Rebellion.png"
+  },
+  {
+    "name": "FlipSid3 Tactics",
+    "image": "images\\clubs/FlipSid3_Tactics.png"
+  },
+  {
+    "name": "Ninjas in Pyjamas",
+    "image": "images\\clubs/Ninjas_in_Pyjamas.png"
+  },
+  {
+    "name": "Team Queso",
+    "image": "images\\clubs/Team_Queso.png"
+  },
+  {
+    "name": "Chiefs Esports Club",
+    "image": "images\\clubs/Chiefs_Esports_Club.png"
+  },
+  {
+    "name": "Renegades",
+    "image": "images\\clubs/Renegades.png"
+  },
+  {
+    "name": "Ghost Gaming",
+    "image": "images\\clubs/Ghost_Gaming.png"
+  },
+  {
+    "name": "Northwood University Blue",
+    "image": "images\\clubs/Northwood_University_Blue.png"
+  },
+  {
+    "name": "The Ultimates",
+    "image": "images\\clubs/The_Ultimates.png"
+  },
+  {
+    "name": "Wildcard",
+    "image": "images\\clubs/Wildcard.png"
+  },
+  {
+    "name": "PSG Esports",
+    "image": "images\\clubs/PSG_Esports.png"
+  },
+  {
+    "name": "Gale Force eSports",
+    "image": "images\\clubs/Gale_Force_eSports.png"
+  },
+  {
+    "name": "True Neutral",
+    "image": "images\\clubs/True_Neutral.png"
+  },
+  {
+    "name": "TSM",
+    "image": "images\\clubs/TSM.png"
+  },
+  {
+    "name": "FC Barcelona",
+    "image": "images\\clubs/FC_Barcelona.png"
+  },
+  {
+    "name": "We Dem Girlz",
+    "image": "images\\clubs/We_Dem_Girlz.png"
+  },
+  {
+    "name": "SMPR Esports",
+    "image": "images\\clubs/SMPR_Esports.png"
+  },
+  {
+    "name": "Evil Geniuses",
+    "image": "images\\clubs/Evil_Geniuses.png"
+  },
+  {
+    "name": "Monkeys",
+    "image": "images\\clubs/Monkeys.png"
+  },
+  {
+    "name": "Knights",
+    "image": "images\\clubs/Knights.png"
+  },
+  {
+    "name": "Method",
+    "image": "images\\clubs/Method.png"
+  },
+  {
+    "name": "The Peeps",
+    "image": "images\\clubs/The_Peeps.png"
+  },
+  {
+    "name": "Luminosity Gaming",
+    "image": "images\\clubs/Luminosity_Gaming.png"
+  },
+  {
+    "name": "Solary",
+    "image": "images\\clubs/Solary.png"
+  },
+  {
+    "name": "Limitless",
+    "image": "images\\clubs/Limitless.png"
+  },
+  {
+    "name": "Gaimin Gladiators",
+    "image": "images\\clubs/Gaimin_Gladiators.png"
+  },
+  {
+    "name": "01 Esports",
+    "image": "images\\clubs/01_Esports.png"
+  },
+  {
+    "name": "MOUZ",
+    "image": "images\\clubs/MOUZ.png"
+  },
+  {
+    "name": "Sandrock Gaming",
+    "image": "images\\clubs/Sandrock_Gaming.png"
+  },
+  {
+    "name": "KRÜ Esports",
+    "image": "images\\clubs/KRÜ_Esports.png"
+  },
+  {
+    "name": "Giants Gaming",
+    "image": "images\\clubs/Giants_Gaming.png"
+  },
+  {
+    "name": "Veloce Esports",
+    "image": "images\\clubs/Veloce_Esports.png"
+  },
+  {
+    "name": "OpTic Gaming",
+    "image": "images\\clubs/OpTic_Gaming.png"
+  },
+  {
+    "name": "Soniqs",
+    "image": "images\\clubs/Soniqs.png"
+  },
+  {
+    "name": "Cringe Society",
+    "image": "images\\clubs/Cringe_Society.png"
+  },
+  {
+    "name": "Top Blokes",
+    "image": "images\\clubs/Top_Blokes.png"
+  },
+  {
+    "name": "FUT Esports",
+    "image": "images\\clubs/FUT_Esports.png"
+  },
+  {
+    "name": "Team France",
+    "image": "images\\clubs/Team_France.png"
+  },
+  {
+    "name": "F16 Esports",
+    "image": "images\\clubs/F16_Esports.png"
+  },
+  {
+    "name": "HEET",
+    "image": "images\\clubs/HEET.png"
+  },
+  {
+    "name": "Northern Gaming",
+    "image": "images\\clubs/Northern_Gaming.png"
+  },
+  {
+    "name": "Elevate",
+    "image": "images\\clubs/Elevate.png"
+  },
+  {
+    "name": "EUnited",
+    "image": "images\\clubs/EUnited.png"
+  },
+  {
+    "name": "Mock-It eSports EU",
+    "image": "images\\clubs/Mock-It_eSports_EU.png"
+  },
+  {
+    "name": "Team Singularity",
+    "image": "images\\clubs/Team_Singularity.png"
+  },
+  {
+    "name": "MIBR",
+    "image": "images\\clubs/MIBR.png"
+  },
+  {
+    "name": "R8 Esports",
+    "image": "images\\clubs/R8_Esports.png"
+  },
+  {
+    "name": "Orlando Pirates Exdee",
+    "image": "images\\clubs/Orlando_Pirates_Exdee.png"
+  },
+  {
+    "name": "Triple Trouble",
+    "image": "images\\clubs/Triple_Trouble.png"
+  },
+  {
+    "name": "Team Vision",
+    "image": "images\\clubs/Team_Vision.png"
+  },
+  {
+    "name": "Team Reciprocity",
+    "image": "images\\clubs/Team_Reciprocity.png"
+  },
+  {
+    "name": "Team Saudi Arabia",
+    "image": "images\\clubs/Team_Saudi_Arabia.png"
+  },
+  {
+    "name": "The Club",
+    "image": "images\\clubs/The_Club.png"
+  },
+  {
+    "name": "Columbia College",
+    "image": "images\\clubs/Columbia_College.png"
+  },
+  {
+    "name": "Ellevens Esports",
+    "image": "images\\clubs/Ellevens_Esports.png"
+  },
+  {
+    "name": "M80",
+    "image": "images\\clubs/M80.png"
+  },
+  {
+    "name": "Charlotte Phoenix",
+    "image": "images\\clubs/Charlotte_Phoenix.png"
+  },
+  {
+    "name": "G1",
+    "image": "images\\clubs/G1.png"
+  },
+  {
+    "name": "University of North Texas",
+    "image": "images\\clubs/University_of_North_Texas.png"
+  },
+  {
+    "name": "Torrent",
+    "image": "images\\clubs/Torrent.png"
+  },
+  {
+    "name": "DeToNator",
+    "image": "images\\clubs/DeToNator.png"
+  },
+  {
+    "name": "Virtus.pro",
+    "image": "images\\clubs/Virtus_pro.png"
+  },
+  {
+    "name": "German Amigos",
+    "image": "images\\clubs/German_Amigos.png"
+  },
+  {
+    "name": "ROC Esports",
+    "image": "images\\clubs/ROC_Esports.png"
+  },
+  {
+    "name": "Team Brazil",
+    "image": "images\\clubs/Team_Brazil.png"
+  },
+  {
+    "name": "Magnifico",
+    "image": "images\\clubs/Magnifico.png"
+  },
+  {
+    "name": "Louisiana State University",
+    "image": "images\\clubs/Louisiana_State_University.png"
+  },
+  {
+    "name": "Fnatic",
+    "image": "images\\clubs/Fnatic.png"
+  },
+  {
+    "name": "Team United States",
+    "image": "images\\clubs/Team_United_States.png"
+  },
+  {
+    "name": "OG",
+    "image": "images\\clubs/OG.png"
+  },
+  {
+    "name": "Stockton University",
+    "image": "images\\clubs/Stockton_University.png"
+  },
+  {
+    "name": "XSET",
+    "image": "images\\clubs/XSET.png"
+  },
+  {
+    "name": "Manchester City Esports",
+    "image": "images\\clubs/Manchester_City_Esports.png"
+  },
+  {
+    "name": "Noble esports",
+    "image": "images\\clubs/Noble_esports.png"
+  },
+  {
+    "name": "Suhhh",
+    "image": "images\\clubs/Suhhh.png"
+  },
+  {
+    "name": "ERa",
+    "image": "images\\clubs/ERa.png"
+  },
+  {
+    "name": "Bravado Gaming",
+    "image": "images\\clubs/Bravado_Gaming.png"
+  },
+  {
+    "name": "University of Central Florida",
+    "image": "images\\clubs/University_of_Central_Florida.png"
+  },
+  {
+    "name": "00 Nation",
+    "image": "images\\clubs/00_Nation.png"
+  },
+  {
+    "name": "Quadrant",
+    "image": "images\\clubs/Quadrant.png"
+  },
+  {
+    "name": "Resolve",
+    "image": "images\\clubs/Resolve.png"
+  },
+  {
+    "name": "Mindfreak",
+    "image": "images\\clubs/Mindfreak.png"
+  },
+  {
+    "name": "Dire Wolves",
+    "image": "images\\clubs/Dire_Wolves.png"
+  },
+  {
+    "name": "Team Netherlands",
+    "image": "images\\clubs/Team_Netherlands.png"
+  },
+  {
+    "name": "Fisher College",
+    "image": "images\\clubs/Fisher_College.png"
+  },
+  {
+    "name": "Five Fears",
+    "image": "images\\clubs/Five_Fears.png"
+  },
+  {
+    "name": "Novus Aevi",
+    "image": "images\\clubs/Novus_Aevi.png"
+  },
+  {
+    "name": "Canterbury-Bankstown Bulldogs",
+    "image": "images\\clubs/Canterbury-Bankstown_Bulldogs.png"
+  },
+  {
+    "name": "FlyQuest",
+    "image": "images\\clubs/FlyQuest.png"
+  },
+  {
+    "name": "University of Texas - Arlington",
+    "image": "images\\clubs/University_of_Texas_-_Arlington.png"
+  },
+  {
+    "name": "Randoms",
+    "image": "images\\clubs/Randoms.png"
+  },
+  {
+    "name": "SK Gaming",
+    "image": "images\\clubs/SK_Gaming.png"
+  },
+  {
+    "name": "University of Arizona",
+    "image": "images\\clubs/University_of_Arizona.jpg"
+  },
+  {
+    "name": "West Virginia University",
+    "image": "images\\clubs/West_Virginia_University.png"
+  },
+  {
+    "name": "NOVO Esports",
+    "image": "images\\clubs/NOVO_Esports.png"
+  },
+  {
+    "name": "100%",
+    "image": "images\\clubs/100_.png"
+  },
+  {
+    "name": "St. Clair College",
+    "image": "images\\clubs/St__Clair_College.png"
+  },
+  {
+    "name": "Galaxy Racer",
+    "image": "images\\clubs/Galaxy_Racer.png"
+  },
+  {
+    "name": "Tokyo Verdy Esports",
+    "image": "images\\clubs/Tokyo_Verdy_Esports.png"
+  },
+  {
+    "name": "Mock-It eSports",
+    "image": "images\\clubs/Mock-It_eSports.png"
+  },
+  {
+    "name": "Hey bro",
+    "image": "images\\clubs/Hey_bro.png"
+  },
+  {
+    "name": "Splyce",
+    "image": "images\\clubs/Splyce.png"
+  },
+  {
+    "name": "RBG Esports",
+    "image": "images\\clubs/RBG_Esports.png"
+  },
+  {
+    "name": "WYLDE",
+    "image": "images\\clubs/WYLDE.png"
+  },
+  {
+    "name": "Gen.G Mobil1 Racing Black",
+    "image": "images\\clubs/Gen_G_Mobil1_Racing_Black.png"
+  },
+  {
+    "name": "Canberra Havoc",
+    "image": "images\\clubs/Canberra_Havoc.png"
+  },
+  {
+    "name": "Team Stallions",
+    "image": "images\\clubs/Team_Stallions.png"
+  },
+  {
+    "name": "AS Monaco Esports",
+    "image": "images\\clubs/AS_Monaco_Esports.png"
+  },
+  {
+    "name": "Al Qadsiah",
+    "image": "images\\clubs/Al_Qadsiah.png"
+  },
+  {
+    "name": "Northwood University White",
+    "image": "images\\clubs/Northwood_University_White.png"
+  },
+  {
+    "name": "Sleeping (Middle Eastern Team)",
+    "image": "images\\clubs/Sleeping__Middle_Eastern_Team_.png"
+  },
+  {
+    "name": "Concord University",
+    "image": "images\\clubs/Concord_University.png"
+  },
+  {
+    "name": "FURY",
+    "image": "images\\clubs/FURY.png"
+  },
+  {
+    "name": "University of Missouri",
+    "image": "images\\clubs/University_of_Missouri.png"
+  },
+  {
+    "name": "ANKAA Esports",
+    "image": "images\\clubs/ANKAA_Esports.png"
+  },
+  {
+    "name": "Avidity Esports",
+    "image": "images\\clubs/Avidity_Esports.png"
+  },
+  {
+    "name": "Lowkey Esports",
+    "image": "images\\clubs/Lowkey_Esports.png"
+  },
+  {
+    "name": "Nimmt55",
+    "image": "images\\clubs/Nimmt55.png"
+  },
+  {
+    "name": "The Three Sins",
+    "image": "images\\clubs/The_Three_Sins.png"
+  },
+  {
+    "name": "The Bricks",
+    "image": "images\\clubs/The_Bricks.png"
+  },
+  {
+    "name": "Tainted Minds",
+    "image": "images\\clubs/Tainted_Minds.png"
+  },
+  {
+    "name": "KINOTROPE gaming",
+    "image": "images\\clubs/KINOTROPE_gaming.png"
+  },
+  {
+    "name": "W7m esports",
+    "image": "images\\clubs/W7m_esports.png"
+  },
+  {
+    "name": "Movistar KOI",
+    "image": "images\\clubs/Movistar_KOI.png"
+  },
+  {
+    "name": "BS+COMPETITION",
+    "image": "images\\clubs/BS_COMPETITION.png"
+  },
+  {
+    "name": "Maryville University",
+    "image": "images\\clubs/Maryville_University.png"
+  },
+  {
+    "name": "Deleted Gaming",
+    "image": "images\\clubs/Deleted_Gaming.png"
+  },
+  {
+    "name": "Team Australia",
+    "image": "images\\clubs/Team_Australia.png"
+  },
+  {
+    "name": "Allegiance",
+    "image": "images\\clubs/Allegiance.png"
+  },
+  {
+    "name": "Savage!",
+    "image": "images\\clubs/Savage_.png"
+  },
+  {
+    "name": "IBUYPOWER",
+    "image": "images\\clubs/IBUYPOWER.png"
+  },
+  {
+    "name": "Reason Gaming",
+    "image": "images\\clubs/Reason_Gaming.png"
+  },
+  {
+    "name": "Team Germany",
+    "image": "images\\clubs/Team_Germany.png"
+  },
+  {
+    "name": "Omelette",
+    "image": "images\\clubs/Omelette.png"
+  },
+  {
+    "name": "Tsurani",
+    "image": "images\\clubs/Tsurani.png"
+  },
+  {
+    "name": "White Rabbit Gaming",
+    "image": "images\\clubs/White_Rabbit_Gaming.png"
+  },
+  {
+    "name": "Boise State University",
+    "image": "images\\clubs/Boise_State_University.png"
+  },
+  {
+    "name": "Misfits Gaming",
+    "image": "images\\clubs/Misfits_Gaming.png"
+  },
+  {
+    "name": "Team Morocco",
+    "image": "images\\clubs/Team_Morocco.png"
+  },
+  {
+    "name": "72PC",
+    "image": "images\\clubs/72PC.png"
+  },
+  {
+    "name": "EndGame",
+    "image": "images\\clubs/EndGame.png"
+  },
+  {
+    "name": "ROUNDS",
+    "image": "images\\clubs/ROUNDS.png"
+  },
+  {
+    "name": "3RATS",
+    "image": "images\\clubs/3RATS.png"
+  },
+  {
+    "name": "REDACTED",
+    "image": "images\\clubs/REDACTED.png"
+  },
+  {
+    "name": "Excel Esports",
+    "image": "images\\clubs/Excel_Esports.png"
+  },
+  {
+    "name": "Afterthought",
+    "image": "images\\clubs/Afterthought.png"
+  },
+  {
+    "name": "Amethyst",
+    "image": "images\\clubs/Amethyst.png"
+  },
+  {
+    "name": "R!OT Gaming",
+    "image": "images\\clubs/R_OT_Gaming.png"
+  },
+  {
+    "name": "Dr. Buhmann Akademie H",
+    "image": "images\\clubs/Dr__Buhmann_Akademie_H.png"
+  },
+  {
+    "name": "University of Texas - Dallas",
+    "image": "images\\clubs/University_of_Texas_-_Dallas.png"
+  },
+  {
+    "name": "Team England",
+    "image": "images\\clubs/Team_England.png"
+  },
+  {
+    "name": "Genesis",
+    "image": "images\\clubs/Genesis.png"
+  },
+  {
+    "name": "Team Chile",
+    "image": "images\\clubs/Team_Chile.png"
+  },
+  {
+    "name": "Project Delacruz",
+    "image": "images\\clubs/Project_Delacruz.png"
+  },
+  {
+    "name": "Flight",
+    "image": "images\\clubs/Flight.png"
+  },
+  {
+    "name": "Team Belgium",
+    "image": "images\\clubs/Team_Belgium.png"
+  },
+  {
+    "name": "Epsilon Esports",
+    "image": "images\\clubs/Epsilon_Esports.png"
+  },
+  {
+    "name": "Lil Step Bros",
+    "image": "images\\clubs/Lil_Step_Bros.png"
+  },
+  {
+    "name": "Hogan Mode",
+    "image": "images\\clubs/Hogan_Mode.png"
+  },
+  {
+    "name": "Synergy (European Team)",
+    "image": "images\\clubs/Synergy__European_Team_.png"
+  },
+  {
+    "name": "The Muffin Men",
+    "image": "images\\clubs/The_Muffin_Men.png"
+  },
+  {
+    "name": "AllMid",
+    "image": "images\\clubs/AllMid.png"
+  },
+  {
+    "name": "Redemption",
+    "image": "images\\clubs/Redemption.png"
+  },
+  {
+    "name": "ZNTRX",
+    "image": "images\\clubs/ZNTRX.png"
+  },
+  {
+    "name": "ATK",
+    "image": "images\\clubs/ATK.png"
+  },
+  {
+    "name": "Infinity (Saudi Arabian Team)",
+    "image": "images\\clubs/Infinity__Saudi_Arabian_Team_.png"
+  },
+  {
+    "name": "AWAWA",
+    "image": "images\\clubs/AWAWA.png"
+  },
+  {
+    "name": "Selfless Gaming",
+    "image": "images\\clubs/Selfless_Gaming.png"
+  },
+  {
+    "name": "Gremlins",
+    "image": "images\\clubs/Gremlins.png"
+  },
+  {
+    "name": "Mustu Fluck",
+    "image": "images\\clubs/Mustu_Fluck.png"
+  },
+  {
+    "name": "Team BSK",
+    "image": "images\\clubs/Team_BSK.png"
+  },
+  {
+    "name": "God Speed",
+    "image": "images\\clubs/God_Speed.png"
+  },
+  {
+    "name": "Godfidence",
+    "image": "images\\clubs/Godfidence.png"
+  },
+  {
+    "name": "Pirates on a Boat",
+    "image": "images\\clubs/Pirates_on_a_Boat.png"
+  },
+  {
+    "name": "White Demons",
+    "image": "images\\clubs/White_Demons.png"
+  },
+  {
+    "name": "Onyx Ravens",
+    "image": "images\\clubs/Onyx_Ravens.png"
+  },
+  {
+    "name": "ORDER",
+    "image": "images\\clubs/ORDER.png"
+  },
+  {
+    "name": "Plot Twist",
+    "image": "images\\clubs/Plot_Twist.png"
+  },
+  {
+    "name": "Take 3",
+    "image": "images\\clubs/Take_3.png"
+  },
+  {
+    "name": "Rix.GG",
+    "image": "images\\clubs/Rix_GG.png"
+  },
+  {
+    "name": "OWL Esports",
+    "image": "images\\clubs/OWL_Esports.png"
+  },
+  {
+    "name": "Ball State University",
+    "image": "images\\clubs/Ball_State_University.png"
+  },
+  {
+    "name": "DOS",
+    "image": "images\\clubs/DOS.png"
+  },
+  {
+    "name": "Strictly Business",
+    "image": "images\\clubs/Strictly_Business.png"
+  },
+  {
+    "name": "Cola",
+    "image": "images\\clubs/Cola.png"
+  },
+  {
+    "name": "Astronic Esports",
+    "image": "images\\clubs/Astronic_Esports.png"
+  },
+  {
+    "name": "Atlantide Wave",
+    "image": "images\\clubs/Atlantide_Wave.png"
+  },
+  {
+    "name": "Sick!",
+    "image": "images\\clubs/Sick_.png"
+  },
+  {
+    "name": "Nefarious",
+    "image": "images\\clubs/Nefarious.png"
+  },
+  {
+    "name": "Northern Virginia Community College",
+    "image": "images\\clubs/Northern_Virginia_Community_College.png"
+  },
+  {
+    "name": "Rebel",
+    "image": "images\\clubs/Rebel.png"
+  },
+  {
+    "name": "California Polytechnic State University",
+    "image": "images\\clubs/California_Polytechnic_State_University.png"
+  },
+  {
+    "name": "F4WD",
+    "image": "images\\clubs/F4WD.png"
+  },
+  {
+    "name": "The Snowmen",
+    "image": "images\\clubs/The_Snowmen.png"
+  },
+  {
+    "name": "SKRIMZWORLD",
+    "image": "images\\clubs/SKRIMZWORLD.png"
+  },
+  {
+    "name": "MCon esports",
+    "image": "images\\clubs/MCon_esports.png"
+  },
+  {
+    "name": "Overlooked",
+    "image": "images\\clubs/Overlooked.png"
+  },
+  {
+    "name": "RCD Espanyol",
+    "image": "images\\clubs/RCD_Espanyol.png"
+  },
+  {
+    "name": "Corinthians Esports",
+    "image": "images\\clubs/Corinthians_Esports.png"
+  },
+  {
+    "name": "1",
+    "image": "images\\clubs/1.png"
+  },
+  {
+    "name": "San Diego State University",
+    "image": "images\\clubs/San_Diego_State_University.png"
+  },
+  {
+    "name": "ARG",
+    "image": "images\\clubs/ARG.png"
+  },
+  {
+    "name": "Luna Galaxy",
+    "image": "images\\clubs/Luna_Galaxy.png"
+  },
+  {
+    "name": "445",
+    "image": "images\\clubs/445.png"
+  },
+  {
+    "name": "Aether",
+    "image": "images\\clubs/Aether.png"
+  },
+  {
+    "name": "The Leftovers",
+    "image": "images\\clubs/The_Leftovers.png"
+  },
+  {
+    "name": "Cloud eSport",
+    "image": "images\\clubs/Cloud_eSport.png"
+  },
+  {
+    "name": "AW3 Esports",
+    "image": "images\\clubs/AW3_Esports.png"
+  },
+  {
+    "name": "Northeastern University",
+    "image": "images\\clubs/Northeastern_University.png"
+  },
+  {
+    "name": "University of Akron Blue",
+    "image": "images\\clubs/University_of_Akron_Blue.png"
+  },
+  {
+    "name": "Hey (with rizz)",
+    "image": "images\\clubs/Hey__with_rizz_.png"
+  },
+  {
+    "name": "Chromax",
+    "image": "images\\clubs/Chromax.png"
+  },
+  {
+    "name": "Just a Minute Gaming",
+    "image": "images\\clubs/Just_a_Minute_Gaming.png"
+  },
+  {
+    "name": "Resolve (Women)",
+    "image": "images\\clubs/Resolve__Women_.png"
+  },
+  {
+    "name": "Forkidden",
+    "image": "images\\clubs/Forkidden.png"
+  },
+  {
+    "name": "AIPX Gaming",
+    "image": "images\\clubs/AIPX_Gaming.png"
+  },
+  {
+    "name": "You not a champ. you a clown.",
+    "image": "images\\clubs/You_not_a_champ__you_a_clown_.png"
+  },
+  {
+    "name": "Stromboli",
+    "image": "images\\clubs/Stromboli.png"
+  },
+  {
+    "name": "Kaka's Minions",
+    "image": "images\\clubs/Kaka_s_Minions.png"
+  },
+  {
+    "name": "Servette Geneva Esports",
+    "image": "images\\clubs/Servette_Geneva_Esports.png"
+  },
+  {
+    "name": "James Cheese",
+    "image": "images\\clubs/James_Cheese.png"
+  },
+  {
+    "name": "Take Flyte",
+    "image": "images\\clubs/Take_Flyte.png"
+  },
+  {
+    "name": "Novadrift",
+    "image": "images\\clubs/Novadrift.png"
+  },
+  {
+    "name": "Team Mobula",
+    "image": "images\\clubs/Team_Mobula.png"
+  },
+  {
+    "name": "Erased",
+    "image": "images\\clubs/Erased.png"
+  },
+  {
+    "name": "SCYTES",
+    "image": "images\\clubs/SCYTES.png"
+  },
+  {
+    "name": "Moonrise",
+    "image": "images\\clubs/Moonrise.png"
+  },
+  {
+    "name": "OGC FC",
+    "image": "images\\clubs/OGC_FC.png"
+  },
+  {
+    "name": "Girls",
+    "image": "images\\clubs/Girls.png"
+  },
+  {
+    "name": "Mirage",
+    "image": "images\\clubs/Mirage.png"
+  },
+  {
+    "name": "TrainHard eSport",
+    "image": "images\\clubs/TrainHard_eSport.png"
+  },
+  {
+    "name": "Missouri University of Science and Technology",
+    "image": "images\\clubs/Missouri_University_of_Science_and_Technology.png"
+  },
+  {
+    "name": "77Blocks",
+    "image": "images\\clubs/77Blocks.png"
+  },
+  {
+    "name": "9Lives",
+    "image": "images\\clubs/9Lives.png"
+  },
+  {
+    "name": "Gentlemen (North American Team)",
+    "image": "images\\clubs/Gentlemen__North_American_Team_.png"
+  },
+  {
+    "name": "Alpha Sydney",
+    "image": "images\\clubs/Alpha_Sydney.png"
+  },
+  {
+    "name": "Wolves Esports",
+    "image": "images\\clubs/Wolves_Esports.png"
+  },
+  {
+    "name": "Sup",
+    "image": "images\\clubs/Sup.png"
+  },
+  {
+    "name": "Exeed",
+    "image": "images\\clubs/Exeed.png"
+  },
+  {
+    "name": "Team AXLE",
+    "image": "images\\clubs/Team_AXLE.png"
+  },
+  {
+    "name": "Penn State University",
+    "image": "images\\clubs/Penn_State_University.png"
+  },
+  {
+    "name": "UHUH",
+    "image": "images\\clubs/UHUH.png"
+  },
+  {
+    "name": "Sunset",
+    "image": "images\\clubs/Sunset.png"
+  },
+  {
+    "name": "Parabellum Esports",
+    "image": "images\\clubs/Parabellum_Esports.png"
+  },
+  {
+    "name": "CALIENTE",
+    "image": "images\\clubs/CALIENTE.png"
+  },
+  {
+    "name": "Vibrance",
+    "image": "images\\clubs/Vibrance.png"
+  },
+  {
+    "name": "INTZ",
+    "image": "images\\clubs/INTZ.png"
+  },
+  {
+    "name": "Team iXA",
+    "image": "images\\clubs/Team_iXA.png"
+  },
+  {
+    "name": "Lotus 8 Esports",
+    "image": "images\\clubs/Lotus_8_Esports.png"
+  },
+  {
+    "name": "Winthrop University",
+    "image": "images\\clubs/Winthrop_University.png"
+  },
+  {
+    "name": "Team Evo",
+    "image": "images\\clubs/Team_Evo.png"
+  },
+  {
+    "name": "Almost Nuts",
+    "image": "images\\clubs/Almost_Nuts.png"
+  },
+  {
+    "name": "Bigodes",
+    "image": "images\\clubs/Bigodes.png"
+  },
+  {
+    "name": "Top Cougars",
+    "image": "images\\clubs/Top_Cougars.png"
+  },
+  {
+    "name": "Team Spain",
+    "image": "images\\clubs/Team_Spain.png"
+  },
+  {
+    "name": "Berlin Phoenix",
+    "image": "images\\clubs/Berlin_Phoenix.png"
+  },
+  {
+    "name": "The Clappers",
+    "image": "images\\clubs/The_Clappers.png"
+  },
+  {
+    "name": "The him police",
+    "image": "images\\clubs/The_him_police.png"
+  },
+  {
+    "name": "Chaos Esports Club",
+    "image": "images\\clubs/Chaos_Esports_Club.png"
+  },
+  {
+    "name": "Bandits ESC",
+    "image": "images\\clubs/Bandits_ESC.png"
+  },
+  {
+    "name": "Team Japan",
+    "image": "images\\clubs/Team_Japan.png"
+  },
+  {
+    "name": "Three Point Shooters",
+    "image": "images\\clubs/Three_Point_Shooters.png"
+  },
+  {
+    "name": "Netherlamericanada",
+    "image": "images\\clubs/Netherlamericanada.png"
+  },
+  {
+    "name": "Precision Z",
+    "image": "images\\clubs/Precision_Z.png"
+  },
+  {
+    "name": "Misfits Gaming (Women)",
+    "image": "images\\clubs/Misfits_Gaming__Women_.png"
+  },
+  {
+    "name": "Pale Horse eSports",
+    "image": "images\\clubs/Pale_Horse_eSports.png"
+  },
+  {
+    "name": "St. Clair College Green",
+    "image": "images\\clubs/St__Clair_College_Green.png"
+  },
+  {
+    "name": "Nixuh",
+    "image": "images\\clubs/Nixuh.png"
+  },
+  {
+    "name": "Team Canada",
+    "image": "images\\clubs/Team_Canada.png"
+  },
+  {
+    "name": "Dreamstation",
+    "image": "images\\clubs/Dreamstation.png"
+  },
+  {
+    "name": "Team Norway",
+    "image": "images\\clubs/Team_Norway.png"
+  },
+  {
+    "name": "Bread",
+    "image": "images\\clubs/Bread.png"
+  },
+  {
+    "name": "Orbit eSports",
+    "image": "images\\clubs/Orbit_eSports.png"
+  },
+  {
+    "name": "Out of Style",
+    "image": "images\\clubs/Out_of_Style.png"
+  },
+  {
+    "name": "The D00ds",
+    "image": "images\\clubs/The_D00ds.png"
+  },
+  {
+    "name": "Lotus eSports",
+    "image": "images\\clubs/Lotus_eSports.png"
+  },
+  {
+    "name": "University of North Carolina - Charlotte",
+    "image": "images\\clubs/University_of_North_Carolina_-_Charlotte.png"
+  },
+  {
+    "name": "Oklahoma Christian University",
+    "image": "images\\clubs/Oklahoma_Christian_University.png"
+  },
+  {
+    "name": "Chippy Chips",
+    "image": "images\\clubs/Chippy_Chips.png"
+  },
+  {
+    "name": "St. Edward's University",
+    "image": "images\\clubs/St__Edward_s_University.png"
+  },
+  {
+    "name": "Team Renewed",
+    "image": "images\\clubs/Team_Renewed.png"
+  },
+  {
+    "name": "Baguette Squad",
+    "image": "images\\clubs/Baguette_Squad.png"
+  },
+  {
+    "name": "Akrew",
+    "image": "images\\clubs/Akrew.png"
+  },
+  {
+    "name": "Canyons",
+    "image": "images\\clubs/Canyons.png"
+  },
+  {
+    "name": "Senbei Strikers",
+    "image": "images\\clubs/Senbei_Strikers.png"
+  },
+  {
+    "name": "Alyom w ana b alsh8l",
+    "image": "images\\clubs/Alyom_w_ana_b_alsh8l.png"
+  },
+  {
+    "name": "Upper90 Esports",
+    "image": "images\\clubs/Upper90_Esports.png"
+  },
+  {
+    "name": "Dumb Luck Esports",
+    "image": "images\\clubs/Dumb_Luck_Esports.png"
+  },
+  {
+    "name": "Zookeepers",
+    "image": "images\\clubs/Zookeepers.png"
+  },
+  {
+    "name": "Team Silenced",
+    "image": "images\\clubs/Team_Silenced.png"
+  },
+  {
+    "name": "Team Infused",
+    "image": "images\\clubs/Team_Infused.png"
+  },
+  {
+    "name": "5Head",
+    "image": "images\\clubs/5Head.png"
+  },
+  {
+    "name": "CosmiCo Esports",
+    "image": "images\\clubs/CosmiCo_Esports.png"
+  },
+  {
+    "name": "Kibbgang",
+    "image": "images\\clubs/Kibbgang.png"
+  },
+  {
+    "name": "Merge Esports",
+    "image": "images\\clubs/Merge_Esports.png"
+  },
+  {
+    "name": "G.A.S.",
+    "image": "images\\clubs/G_A_S_.png"
+  },
+  {
+    "name": "Nightmare",
+    "image": "images\\clubs/Nightmare.png"
+  },
+  {
+    "name": "Oakland University",
+    "image": "images\\clubs/Oakland_University.png"
+  },
+  {
+    "name": "Overt",
+    "image": "images\\clubs/Overt.png"
+  },
+  {
+    "name": "Team Malaysia",
+    "image": "images\\clubs/Team_Malaysia.png"
+  },
+  {
+    "name": "Team South Africa",
+    "image": "images\\clubs/Team_South_Africa.png"
+  },
+  {
+    "name": "Everything",
+    "image": "images\\clubs/Everything.png"
+  },
+  {
+    "name": "Placeholders",
+    "image": "images\\clubs/Placeholders.png"
+  },
+  {
+    "name": "Fast And Furious",
+    "image": "images\\clubs/Fast_And_Furious.png"
+  },
+  {
+    "name": "Nothing",
+    "image": "images\\clubs/Nothing.png"
+  },
+  {
+    "name": "Team Argentina",
+    "image": "images\\clubs/Team_Argentina.png"
+  },
+  {
+    "name": "Valiant",
+    "image": "images\\clubs/Valiant.png"
+  },
+  {
+    "name": "Birds",
+    "image": "images\\clubs/Birds.png"
+  },
+  {
+    "name": "Incorrect",
+    "image": "images\\clubs/Incorrect.png"
+  },
+  {
+    "name": "Team HSK",
+    "image": "images\\clubs/Team_HSK.png"
+  },
+  {
+    "name": "Crimson Wings",
+    "image": "images\\clubs/Crimson_Wings.png"
+  },
+  {
+    "name": "Next2Nu Esports",
+    "image": "images\\clubs/Next2Nu_Esports.png"
+  },
+  {
+    "name": "Las Vegas Inferno",
+    "image": "images\\clubs/Las_Vegas_Inferno.png"
+  },
+  {
+    "name": "NORTHSTAR",
+    "image": "images\\clubs/NORTHSTAR.png"
+  },
+  {
+    "name": "Jobless",
+    "image": "images\\clubs/Jobless.png"
+  },
+  {
+    "name": "Tundra Esports",
+    "image": "images\\clubs/Tundra_Esports.png"
+  },
+  {
+    "name": "PSG TUNDRA",
+    "image": "images\\clubs/PSG_TUNDRA.png"
+  },
+  {
+    "name": "Jamal Jabary",
+    "image": "images\\clubs/Jamal_Jabary.png"
+  },
+  {
+    "name": "Atom Unity",
+    "image": "images\\clubs/Atom_Unity.png"
+  },
+  {
+    "name": "Kaydop Corp",
+    "image": "images\\clubs/Kaydop_Corp.png"
+  },
+  {
+    "name": "100X35 Esports",
+    "image": "images\\clubs/100X35_Esports.png"
+  },
+  {
+    "name": "Attack of the Invisible Ninja",
+    "image": "images\\clubs/Attack_of_the_Invisible_Ninja.png"
+  },
+  {
+    "name": "Alke",
+    "image": "images\\clubs/Alke.png"
+  },
+  {
+    "name": "Blazar",
+    "image": "images\\clubs/Blazar.png"
+  },
+  {
+    "name": "University of Nevada Las Vegas",
+    "image": "images\\clubs/University_of_Nevada_Las_Vegas.png"
+  },
+  {
+    "name": "Fadeaway",
+    "image": "images\\clubs/Fadeaway.png"
+  },
+  {
+    "name": "KRN",
+    "image": "images\\clubs/KRN.png"
+  },
+  {
+    "name": "Avant Gaming",
+    "image": "images\\clubs/Avant_Gaming.png"
+  },
+  {
+    "name": "Red Reserve",
+    "image": "images\\clubs/Red_Reserve.png"
+  },
+  {
+    "name": "Bull Send",
+    "image": "images\\clubs/Bull_Send.png"
+  },
+  {
+    "name": "Legacy Esports",
+    "image": "images\\clubs/Legacy_Esports.png"
+  },
+  {
+    "name": "Rafha Esports",
+    "image": "images\\clubs/Rafha_Esports.png"
+  },
+  {
+    "name": "MMT (Saudi Arabian Team)",
+    "image": "images\\clubs/MMT__Saudi_Arabian_Team_.png"
+  },
+  {
+    "name": "Denial Esports",
+    "image": "images\\clubs/Denial_Esports.png"
+  },
+  {
+    "name": "KINGS Esports",
+    "image": "images\\clubs/KINGS_Esports.png"
+  },
+  {
+    "name": "RetalsMajicCheese",
+    "image": "images\\clubs/RetalsMajicCheese.png"
+  },
+  {
+    "name": "Team .EXE",
+    "image": "images\\clubs/Team__EXE.png"
+  },
+  {
+    "name": "Omni Nation",
+    "image": "images\\clubs/Omni_Nation.png"
+  },
+  {
+    "name": "Papo de Visão",
+    "image": "images\\clubs/Papo_de_Visão.png"
+  },
+  {
+    "name": "Leviatán",
+    "image": "images\\clubs/Leviatán.png"
+  },
+  {
+    "name": "WIP Esports",
+    "image": "images\\clubs/WIP_Esports.png"
+  },
+  {
+    "name": "Dunno Chief",
+    "image": "images\\clubs/Dunno_Chief.png"
+  },
+  {
+    "name": "Esport BERG",
+    "image": "images\\clubs/Esport_BERG.png"
+  },
+  {
+    "name": "Seleção",
+    "image": "images\\clubs/Seleção.png"
+  },
+  {
+    "name": "Lenovo Legion Honvéd",
+    "image": "images\\clubs/Lenovo_Legion_Honvéd.png"
+  },
+  {
+    "name": "Bay State College",
+    "image": "images\\clubs/Bay_State_College.png"
+  },
+  {
+    "name": "Genesis (South American Team)",
+    "image": "images\\clubs/Genesis__South_American_Team_.png"
+  },
+  {
+    "name": "Compadres",
+    "image": "images\\clubs/Compadres.png"
+  },
+  {
+    "name": "WOO",
+    "image": "images\\clubs/WOO.png"
+  },
+  {
+    "name": "NXT",
+    "image": "images\\clubs/NXT.png"
+  },
+  {
+    "name": "Scald eSports",
+    "image": "images\\clubs/Scald_eSports.png"
+  },
+  {
+    "name": "Monaco Esports",
+    "image": "images\\clubs/Monaco_Esports.png"
+  },
+  {
+    "name": "Fear of God",
+    "image": "images\\clubs/Fear_of_God.png"
+  },
+  {
+    "name": "Fortnite Flick",
+    "image": "images\\clubs/Fortnite_Flick.png"
+  },
+  {
+    "name": "Nerve (Oceanic Team)",
+    "image": "images\\clubs/Nerve__Oceanic_Team_.png"
+  },
+  {
+    "name": "Str1ve eSports",
+    "image": "images\\clubs/Str1ve_eSports.png"
+  },
+  {
+    "name": "Death Cloud Esports",
+    "image": "images\\clubs/Death_Cloud_Esports.png"
+  },
+  {
+    "name": "Gaming Gamers",
+    "image": "images\\clubs/Gaming_Gamers.png"
+  },
+  {
+    "name": "GameWard",
+    "image": "images\\clubs/GameWard.png"
+  },
+  {
+    "name": "Indian River State College",
+    "image": "images\\clubs/Indian_River_State_College.png"
+  },
+  {
+    "name": "French class",
+    "image": "images\\clubs/French_class.png"
+  },
+  {
+    "name": "Valleyfield College",
+    "image": "images\\clubs/Valleyfield_College.png"
+  },
+  {
+    "name": "Ohio State University",
+    "image": "images\\clubs/Ohio_State_University.png"
+  },
+  {
+    "name": "GHT",
+    "image": "images\\clubs/GHT.png"
+  },
+  {
+    "name": "May contain nuts (South African Team)",
+    "image": "images\\clubs/May_contain_nuts__South_African_Team_.png"
+  },
+  {
+    "name": "Team United Kingdom",
+    "image": "images\\clubs/Team_United_Kingdom.png"
+  },
+  {
+    "name": "I'm fine in the west",
+    "image": "images\\clubs/I_m_fine_in_the_west.png"
+  },
+  {
+    "name": "MTS",
+    "image": "images\\clubs/MTS.png"
+  },
+  {
+    "name": "EMPTY",
+    "image": "images\\clubs/EMPTY.png"
+  },
+  {
+    "name": "Erodium",
+    "image": "images\\clubs/Erodium.png"
+  },
+  {
+    "name": "Budapest Five",
+    "image": "images\\clubs/Budapest_Five.png"
+  },
+  {
+    "name": "Enosis eSports",
+    "image": "images\\clubs/Enosis_eSports.png"
+  },
+  {
+    "name": "Le bosh",
+    "image": "images\\clubs/Le_bosh.png"
+  },
+  {
+    "name": "Buckos",
+    "image": "images\\clubs/Buckos.png"
+  },
+  {
+    "name": "The Juicy Kids",
+    "image": "images\\clubs/The_Juicy_Kids.png"
+  },
+  {
+    "name": "Team Bliss",
+    "image": "images\\clubs/Team_Bliss.png"
+  },
+  {
+    "name": "The Boys (American Team)",
+    "image": "images\\clubs/The_Boys__American_Team_.png"
+  },
+  {
+    "name": "Game Fist",
+    "image": "images\\clubs/Game_Fist.png"
+  },
+  {
+    "name": "Infamous",
+    "image": "images\\clubs/Infamous.png"
+  },
+  {
+    "name": "Sleeping",
+    "image": "images\\clubs/Sleeping.png"
+  },
+  {
+    "name": "In the House",
+    "image": "images\\clubs/In_the_House.png"
+  },
+  {
+    "name": "Discombobulators",
+    "image": "images\\clubs/Discombobulators.png"
+  },
+  {
+    "name": "NewJeans",
+    "image": "images\\clubs/NewJeans.png"
+  },
+  {
+    "name": "Atelier",
+    "image": "images\\clubs/Atelier.png"
+  },
+  {
+    "name": "SENZA Esports",
+    "image": "images\\clubs/SENZA_Esports.png"
+  },
+  {
+    "name": "Team Reds",
+    "image": "images\\clubs/Team_Reds.png"
+  },
+  {
+    "name": "Atypical",
+    "image": "images\\clubs/Atypical.png"
+  },
+  {
+    "name": "Fibeon eSports",
+    "image": "images\\clubs/Fibeon_eSports.png"
+  },
+  {
+    "name": "Edelweiss Esports",
+    "image": "images\\clubs/Edelweiss_Esports.png"
+  },
+  {
+    "name": "1NE eSports",
+    "image": "images\\clubs/1NE_eSports.png"
+  },
+  {
+    "name": "Kings of Urban",
+    "image": "images\\clubs/Kings_of_Urban.png"
+  },
+  {
+    "name": "GeneSix",
+    "image": "images\\clubs/GeneSix.png"
+  },
+  {
+    "name": "SHUFFLES KITTENS",
+    "image": "images\\clubs/SHUFFLES_KITTENS.png"
+  },
+  {
+    "name": "Dream Conspiracy",
+    "image": "images\\clubs/Dream_Conspiracy.png"
+  },
+  {
+    "name": "Osh-Tekk Warriors",
+    "image": "images\\clubs/Osh-Tekk_Warriors.png"
+  },
+  {
+    "name": "Coconutters",
+    "image": "images\\clubs/Coconutters.png"
+  },
+  {
+    "name": "Austrian Force",
+    "image": "images\\clubs/Austrian_Force.png"
+  },
+  {
+    "name": "FIZ6 Gaming",
+    "image": "images\\clubs/FIZ6_Gaming.png"
+  },
+  {
+    "name": "Oi Oi",
+    "image": "images\\clubs/Oi_Oi.png"
+  },
+  {
+    "name": "Miami Metro",
+    "image": "images\\clubs/Miami_Metro.png"
+  },
+  {
+    "name": "Team Vertex",
+    "image": "images\\clubs/Team_Vertex.png"
+  },
+  {
+    "name": "Jungle Juicers",
+    "image": "images\\clubs/Jungle_Juicers.png"
+  },
+  {
+    "name": "Frontline",
+    "image": "images\\clubs/Frontline.png"
+  },
+  {
+    "name": "Davenport University Black",
+    "image": "images\\clubs/Davenport_University_Black.png"
+  },
+  {
+    "name": "Counter Logic Gaming",
+    "image": "images\\clubs/Counter_Logic_Gaming.png"
+  },
+  {
+    "name": "Hero Base",
+    "image": "images\\clubs/Hero_Base.png"
+  },
+  {
+    "name": "SailingEsports",
+    "image": "images\\clubs/SailingEsports.png"
+  },
+  {
+    "name": "Justice Esports",
+    "image": "images\\clubs/Justice_Esports.png"
+  },
+  {
+    "name": "Exodus",
+    "image": "images\\clubs/Exodus.png"
+  },
+  {
+    "name": "Synthesis",
+    "image": "images\\clubs/Synthesis.png"
+  },
+  {
+    "name": "Team3",
+    "image": "images\\clubs/Team3.png"
+  },
+  {
+    "name": "Soinsanegaming",
+    "image": "images\\clubs/Soinsanegaming.png"
+  },
+  {
+    "name": "Xayfhers",
+    "image": "images\\clubs/Xayfhers.png"
+  },
+  {
+    "name": "Team Italy",
+    "image": "images\\clubs/Team_Italy.png"
+  },
+  {
+    "name": "R.T.T.",
+    "image": "images\\clubs/R_T_T_.png"
+  },
+  {
+    "name": "The Lakeshow",
+    "image": "images\\clubs/The_Lakeshow.png"
+  },
+  {
+    "name": "Not Exposed",
+    "image": "images\\clubs/Not_Exposed.png"
+  },
+  {
+    "name": "Team WMB",
+    "image": "images\\clubs/Team_WMB.png"
+  },
+  {
+    "name": "Dangerous Esports Club",
+    "image": "images\\clubs/Dangerous_Esports_Club.png"
+  },
+  {
+    "name": "Team Mexico",
+    "image": "images\\clubs/Team_Mexico.png"
+  },
+  {
+    "name": "ReckenRockets H",
+    "image": "images\\clubs/ReckenRockets_H.png"
+  },
+  {
+    "name": "Out of Order",
+    "image": "images\\clubs/Out_of_Order.png"
+  },
+  {
+    "name": "Aogiri",
+    "image": "images\\clubs/Aogiri.png"
+  },
+  {
+    "name": "Team X",
+    "image": "images\\clubs/Team_X.png"
+  },
+  {
+    "name": "NOKAR Esports",
+    "image": "images\\clubs/NOKAR_Esports.png"
+  },
+  {
+    "name": "Ruby",
+    "image": "images\\clubs/Ruby.png"
+  },
+  {
+    "name": "Pulse",
+    "image": "images\\clubs/Pulse.png"
+  },
+  {
+    "name": "No Mercy Esports",
+    "image": "images\\clubs/No_Mercy_Esports.png"
+  },
+  {
+    "name": "Iz im dreamin",
+    "image": "images\\clubs/Iz_im_dreamin.png"
+  },
+  {
+    "name": "Sector One",
+    "image": "images\\clubs/Sector_One.png"
+  },
+  {
+    "name": "Victory Esports",
+    "image": "images\\clubs/Victory_Esports.png"
+  },
+  {
+    "name": "Nkosi Ballers",
+    "image": "images\\clubs/Nkosi_Ballers.png"
+  },
+  {
+    "name": "Emerald",
+    "image": "images\\clubs/Emerald.png"
+  },
+  {
+    "name": "VENC Gaming",
+    "image": "images\\clubs/VENC_Gaming.png"
+  },
+  {
+    "name": "Godsmilla's Team",
+    "image": "images\\clubs/Godsmilla_s_Team.png"
+  },
+  {
+    "name": "G2 Luna",
+    "image": "images\\clubs/G2_Luna.png"
+  },
+  {
+    "name": "GriddyGoose",
+    "image": "images\\clubs/GriddyGoose.png"
+  },
+  {
+    "name": "Maestros Del Esférico",
+    "image": "images\\clubs/Maestros_Del_Esférico.png"
+  },
+  {
+    "name": "Total Grease",
+    "image": "images\\clubs/Total_Grease.png"
+  },
+  {
+    "name": "RJM",
+    "image": "images\\clubs/RJM.png"
+  },
+  {
+    "name": "Hamburger Haie Ahoi Bois",
+    "image": "images\\clubs/Hamburger_Haie_Ahoi_Bois.png"
+  },
+  {
+    "name": "Super Team",
+    "image": "images\\clubs/Super_Team.png"
+  },
+  {
+    "name": "Dreifach-Reset",
+    "image": "images\\clubs/Dreifach-Reset.png"
+  },
+  {
+    "name": "University of Maryland",
+    "image": "images\\clubs/University_of_Maryland.png"
+  },
+  {
+    "name": "YapVille",
+    "image": "images\\clubs/YapVille.png"
+  },
+  {
+    "name": "Carnage Gaming",
+    "image": "images\\clubs/Carnage_Gaming.png"
+  },
+  {
+    "name": "CatJAM",
+    "image": "images\\clubs/CatJAM.png"
+  },
+  {
+    "name": "Nubbles",
+    "image": "images\\clubs/Nubbles.png"
+  },
+  {
+    "name": "Farmville",
+    "image": "images\\clubs/Farmville.png"
+  },
+  {
+    "name": "Team Esper",
+    "image": "images\\clubs/Team_Esper.png"
+  },
+  {
+    "name": "Dream Esports",
+    "image": "images\\clubs/Dream_Esports.png"
+  },
+  {
+    "name": "Reply Totem",
+    "image": "images\\clubs/Reply_Totem.png"
+  },
+  {
+    "name": "Forbidden Gaming",
+    "image": "images\\clubs/Forbidden_Gaming.png"
+  },
+  {
+    "name": "Natus Vincere",
+    "image": "images\\clubs/Natus_Vincere.png"
+  },
+  {
+    "name": "Anything",
+    "image": "images\\clubs/Anything.png"
+  },
+  {
+    "name": "Lycus Empire",
+    "image": "images\\clubs/Lycus_Empire.png"
+  },
+  {
+    "name": "Three One Two's",
+    "image": "images\\clubs/Three_One_Two_s.png"
+  },
+  {
+    "name": "Young Money Clan",
+    "image": "images\\clubs/Young_Money_Clan.png"
+  },
+  {
+    "name": "Endpoint UV",
+    "image": "images\\clubs/Endpoint_UV.png"
+  },
+  {
+    "name": "MTK Budapest",
+    "image": "images\\clubs/MTK_Budapest.png"
+  },
+  {
+    "name": "Looking for Organization",
+    "image": "images\\clubs/Looking_for_Organization.png"
+  },
+  {
+    "name": "Zen Esports",
+    "image": "images\\clubs/Zen_Esports.png"
+  },
+  {
+    "name": "PENTA Sports",
+    "image": "images\\clubs/PENTA_Sports.png"
+  },
+  {
+    "name": "Locusts",
+    "image": "images\\clubs/Locusts.png"
+  },
+  {
+    "name": "Ottawa University",
+    "image": "images\\clubs/Ottawa_University.png"
+  },
+  {
+    "name": "Just Chilling",
+    "image": "images\\clubs/Just_Chilling.png"
+  },
+  {
+    "name": "Unity",
+    "image": "images\\clubs/Unity.png"
+  },
+  {
+    "name": "Luminosity Gaming (Women)",
+    "image": "images\\clubs/Luminosity_Gaming__Women_.png"
+  },
+  {
+    "name": "Sukhpartik",
+    "image": "images\\clubs/Sukhpartik.png"
+  },
+  {
+    "name": "Ambition Esports",
+    "image": "images\\clubs/Ambition_Esports.png"
+  },
+  {
+    "name": "LUK eSports",
+    "image": "images\\clubs/LUK_eSports.png"
+  }
+]
