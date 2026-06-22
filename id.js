@@ -108,7 +108,9 @@ const TEAMS = Object.freeze({
   'VP':                 '/teams/VP.png',
   // Wildcard
   'Wildcard':           '/teams/WILD.png',
-  'NMJF':               '/teams/Default.png'
+  'NMJF':               '/teams/Default.png',
+  'Mawk':               '/teams/France.png',
+  'Nass':               '/teams/M8.png'
 });
 
 
@@ -315,8 +317,19 @@ const TOURNAMENTS = [
   },
 
   {
-    id: '1V1 EU', name: '1V1 EU', year: 2026, type: 'qualifier', status: 'ongoing',
+    id: '1V1 EU', name: '1V1 EU', year: 2026, type: 'qualifier', status: 'completed',
     logo: '/img/worlds2025.png', date: '19–21 juin 2026',
+    score: { correct: 6, total: 9 },
+    champion: { pred: 'Mawk', result: 'Nass' },
+    phases: [
+      { id: 'playoffs', label: 'Playoffs',    imgs: [{ src: '/img/1V1-playoff-predi.png', label: 'Mes prédictions Playoffs - 1v1 EU 2026',  note: 'Prédiction avant le commencement des Playoffs' }, { src: '/img/1V1-playoff-results.png', label: 'Résultats Playoffs - 1v1 EU 2026' }] },
+      { id: 'ALL',      label: 'ALL',         imgs: [{ src: '/img/1V1-playoff-results.png', label: 'Résultats Playoffs - 1v1 EU 2026' }] },
+    ],
+  },
+
+  {
+    id: 'LCQ-2026', name: 'LCQ 2026', year: 2026, type: 'qualifier', status: 'ongoing',
+    logo: '/img/RLCSpp.png', date: '3–25 juillet 2026',
     champion: { pred: 'TBD', result: null },
     phases: [
       { id: 'groups',   label: 'Group Stage', imgs: [] },
@@ -326,13 +339,13 @@ const TOURNAMENTS = [
   },
 
   {
-    id: 'LCQ-2026', name: 'LCQ 2026', year: 2026, type: 'qualifier', status: 'upcoming',
-    logo: '/img/RLCSpp.png', date: '3–25 juillet 2026',
+    id: 'ewc-LCQ-2026', name: 'Esports World Cup LCQ 2026', year: 2026, type: 'other', status: 'upcoming',
+    logo: '/img/ewcpp.png', date: '12–16 août 2026',
     champion: { pred: 'TBD', result: null },
     phases: [
-      { id: 'groups',   label: 'Group Stage', imgs: [] },
-      { id: 'playoffs', label: 'Playoffs',    imgs: [] },
-      { id: 'ALL',      label: 'ALL',         imgs: [] },
+      { id: 'groups',   label: 'Groups',   imgs: [] },
+      { id: 'playoffs', label: 'Playoffs', imgs: [] },
+      { id: 'ALL',      label: 'ALL',      imgs: [] },
     ],
   },
 
