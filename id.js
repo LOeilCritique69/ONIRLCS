@@ -328,18 +328,18 @@ const TOURNAMENTS = [
   },
 
   {
-    id: 'LCQ-2026', name: 'LCQ 2026', year: 2026, type: 'qualifier', status: 'ongoing',
+    id: 'LCQ-2026', name: 'LCQ 2026', year: 2026, type: 'qualifier', status: 'completed',
     logo: '/img/RLCSpp.png', date: '3–25 juillet 2026',
-    champion: { pred: 'TBD', result: null },
+    score: { correct: 7, total: 9 },
+    champion: { pred: 'Volaire', result: 'Mate y Tapa' },
     phases: [
-      { id: 'groups',   label: 'Group Stage', imgs: [] },
-      { id: 'playoffs', label: 'Playoffs',    imgs: [] },
+      { id: 'playoffs', label: 'Playoffs',    imgs: [{ src: '/img/LCQ-2026-Result.png', label: 'Mes prédictions Playoffs & Resultats - LCQ EU 2026' }] },
       { id: 'ALL',      label: 'ALL',         imgs: [] },
     ],
   },
 
   {
-    id: 'ewc-LCQ-2026', name: 'Esports World Cup LCQ 2026', year: 2026, type: 'other', status: 'upcoming',
+    id: 'ewc-LCQ-2026', name: 'Esports World Cup LCQ 2026', year: 2026, type: 'other', status: 'ongoing',
     logo: '/img/ewcpp.png', date: '12–16 août 2026',
     champion: { pred: 'TBD', result: null },
     phases: [
