@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>OniRLCS — Mes Prédictions RLCS</title>
-  <meta name="description" content="Suivi personnel des prédictions RLCS saison 2025–2026 : scores, résultats par tournoi, taux de réussite global.">
+  <title>OniRLCS — Carnet de pronostics RLCS</title>
+  <meta name="description" content="Carnet de pronostics RLCS d'Oni : score par événement, pronostic vs résultat, saisons 2025–2026.">
   <meta name="author" content="Yanis (Oni)">
-  <meta name="theme-color" content="#0e1220">
+  <meta name="theme-color" content="#0a0c12">
 
   <meta property="og:type" content="website">
-  <meta property="og:title" content="OniRLCS — Mes Prédictions">
-  <meta property="og:description" content="Suivi des prédictions RLCS 2025–2026, Major par Major.">
+  <meta property="og:title" content="OniRLCS — Carnet de pronostics">
+  <meta property="og:description" content="Pronostics RLCS 2025–2026, événement par événement.">
   <meta property="og:image" content="/img/og-preview.png">
   <meta property="og:locale" content="fr_FR">
 
@@ -20,54 +20,49 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Oswald:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <a class="skip-link" href="#main-content">Aller au contenu principal</a>
+  <a class="skip-link" href="#stage">Aller au contenu</a>
 
-  <div class="page-shell">
-    <header class="site-header" role="banner">
-      <div class="header-title">
-        <p class="eyebrow" aria-hidden="true">RLCS Prediction Tracker</p>
-        <h1>Oni<span>RLCS</span></h1>
-        <p class="sub" aria-label="Suivi de prédictions, saisons 2025 et 2026">
-          Predictions &bull; 2025–2026
-        </p>
+  <div class="app-shell">
+
+    <header class="rail" role="banner">
+      <button type="button" class="rail-brand rail-brand-link" id="home-link" aria-label="Accueil — vue d'ensemble">
+        <p class="rail-kicker" aria-hidden="true">Rocket League Championship Series</p>
+        <h1 class="rail-name">Oni<span>RLCS</span></h1>
+        <p class="rail-sub">Carnet de pronostics — 2025 → 2026</p>
+      </button>
+
+      <div class="rail-ticker" id="rail-ticker" aria-label="Statistiques globales"></div>
+
+      <div class="season-switch" role="group" aria-label="Choisir la saison">
+        <button type="button" class="season-opt" data-season="2025" aria-pressed="true">2025</button>
+        <button type="button" class="season-opt" data-season="2026" aria-pressed="false">2026</button>
       </div>
 
-      <aside class="header-stats" id="global-stats" aria-label="Statistiques globales de prédiction"></aside>
+      <nav class="event-list" id="event-list" aria-label="Événements de la saison"></nav>
     </header>
 
-    <div class="toolbar">
-      <div class="category-nav-wrap">
-        <nav class="category-nav" aria-label="Filtrer par saison">
-          <button class="category-btn active" data-category="2025" aria-pressed="true">Saison 2025</button>
-          <button class="category-btn" data-category="2026" aria-pressed="false">Saison 2026</button>
-        </nav>
-      </div>
+    <main class="stage" id="stage" tabindex="-1"></main>
 
-      <div class="nav-wrap">
-        <nav class="nav" id="main-nav" aria-label="Sélectionner un tournoi"></nav>
-      </div>
-    </div>
-
-    <main id="main-content" tabindex="-1"></main>
   </div>
 
-  <div id="lightbox" role="dialog" aria-modal="true" aria-label="Vue agrandie de l'image" aria-hidden="true">
-    <button id="lightbox-close" type="button" aria-label="Fermer (Échap)">✕</button>
+  <div id="viewer" role="dialog" aria-modal="true" aria-label="Aperçu de l'image" aria-hidden="true">
+    <button id="viewer-close" type="button" aria-label="Fermer (Échap)">✕</button>
 
-    <figure class="lightbox-figure">
-      <img id="lightbox-img" src="" alt="">
-      <figcaption id="lightbox-label" aria-live="polite"></figcaption>
+    <figure class="viewer-figure">
+      <img id="viewer-img" src="" alt="">
     </figure>
 
-    <nav id="lightbox-nav" aria-label="Navigation entre images">
-      <button class="lb-nav-btn" id="lb-prev" type="button" aria-label="Image précédente (←)">← Préc.</button>
-      <span class="lb-counter" id="lb-counter" aria-live="polite" aria-atomic="true"></span>
-      <button class="lb-nav-btn" id="lb-next" type="button" aria-label="Image suivante (→)">Suiv. →</button>
+    <figcaption id="viewer-caption" aria-live="polite"></figcaption>
+
+    <nav class="viewer-nav" aria-label="Navigation entre les images">
+      <button class="viewer-btn" id="viewer-prev" type="button" aria-label="Image précédente (←)">←</button>
+      <span class="viewer-count" id="viewer-count" aria-live="polite" aria-atomic="true"></span>
+      <button class="viewer-btn" id="viewer-next" type="button" aria-label="Image suivante (→)">→</button>
     </nav>
   </div>
 

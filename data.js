@@ -1,150 +1,121 @@
 /* ==========================================================================
-   data.js — Sections 3 à 10 : Store, Helpers, Lightbox, Renderers,
-             View, Controller, Events, Bootstrap
-   Dépend de id.js (CONFIG, STATUS_LABELS, TYPE_LABELS, TOURNAMENTS).
+   app.js (data.js) — Moteur de l'application OniRLCS.
+   Dépend de id.js (APP, STATUS_TEXT, KIND_TEXT, TEAM_LOGOS, EVENTS).
+
+   Sommaire :
+     1. State    — source de vérité (tallies, saison/événement actifs)
+     2. Utils    — fonctions pures
+     3. Viewer   — visionneuse plein écran (ex-lightbox)
+     4. Blocks   — gabarits HTML (fonctions pures → chaînes)
+     5. Screen   — écriture DOM
+     6. Actions  — orchestration State ↔ Screen
+     7. wireEvents — délégation d'événements
+     8. boot     — démarrage
    ========================================================================== */
 
 'use strict';
 
 
 /* --------------------------------------------------------------------------
-   3. STORE — source unique de vérité pour l'état mutable
+   1. STATE
    -------------------------------------------------------------------------- */
 
-/**
- * Centralise l'état mutable : scores, catégorie active, tournoi actif.
- * Toute modification passe par les méthodes du Store, jamais directement.
- */
-const Store = (() => {
-  const _scores = _loadScores();
+const State = (() => {
+  const byId = new Map(EVENTS.map(e => [e.id, e]));
+  const saved = readTallies();
 
-  // Hydrate les scores persistés dans les objets tournoi au démarrage
-  TOURNAMENTS.forEach(t => {
-    if (_scores[t.id]) t.score = _scores[t.id];
-  });
+  EVENTS.forEach(e => { if (saved[e.id]) e.tally = saved[e.id]; });
 
-  // Index O(1) par id
-  const _index = new Map(TOURNAMENTS.map(t => [t.id, t]));
+  let season  = sessionStorage.getItem(APP.SESSION.SEASON) ?? APP.START_SEASON;
+  let current = sessionStorage.getItem(APP.SESSION.EVENT)  ?? null;
 
-  let _category  = sessionStorage.getItem(CONFIG.SESSION_KEYS.CATEGORY)  ?? CONFIG.DEFAULT_YEAR;
-  let _activeTid = sessionStorage.getItem(CONFIG.SESSION_KEYS.TOURNAMENT) ?? null;
-
-  function _loadScores() {
+  function readTallies() {
     try {
-      const raw = localStorage.getItem(CONFIG.STORAGE_KEY);
+      const raw = localStorage.getItem(APP.DB_KEY);
       return raw ? JSON.parse(raw) : {};
     } catch {
       return {};
     }
   }
 
-  function _persistScores() {
+  function writeTallies(all) {
     try {
-      localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(_scores));
+      localStorage.setItem(APP.DB_KEY, JSON.stringify(all));
     } catch (err) {
-      console.warn('[Store] localStorage write failed:', err);
+      console.warn('[State] écriture localStorage impossible :', err);
     }
   }
 
   return {
-    /** @returns {Tournament|undefined} */
-    get(id) { return _index.get(id); },
+    find(id) { return byId.get(id); },
 
-    /** @returns {Tournament[]} */
-    byYear(year) { return TOURNAMENTS.filter(t => String(t.year) === String(year)); },
+    inSeason(season) { return EVENTS.filter(e => String(e.season) === String(season)); },
 
-    getCategory()  { return _category; },
-    getActiveTid() { return _activeTid; },
+    seasons() { return [...new Set(EVENTS.map(e => String(e.season)))]; },
 
-    setCategory(year) {
-      _category = String(year);
-      sessionStorage.setItem(CONFIG.SESSION_KEYS.CATEGORY, _category);
+    season()        { return season; },
+    current()        { return current; },
+
+    setSeason(value) {
+      season = String(value);
+      sessionStorage.setItem(APP.SESSION.SEASON, season);
     },
 
-    setActiveTid(id) {
-      _activeTid = id;
-      sessionStorage.setItem(CONFIG.SESSION_KEYS.TOURNAMENT, id);
+    setCurrent(id) {
+      current = id;
+      sessionStorage.setItem(APP.SESSION.EVENT, id);
     },
 
-    /**
-     * Valide et persiste un score pour un tournoi.
-     * @param {string} id
-     * @param {number} correct
-     * @param {number} total
-     * @returns {boolean}
-     */
-    setScore(id, correct, total) {
-      const t = _index.get(id);
-      if (!t) return false;
+    recordTally(id, hit, of) {
+      const ev = byId.get(id);
+      if (!ev) return false;
 
-      const c   = Math.max(0, Math.floor(Number(correct)));
-      const tot = Math.max(0, Math.floor(Number(total)));
+      const h = Math.max(0, Math.floor(Number(hit)));
+      const o = Math.max(0, Math.floor(Number(of)));
+      if (!Number.isFinite(h) || !Number.isFinite(o)) return false;
 
-      if (!Number.isFinite(c) || !Number.isFinite(tot)) return false;
+      const all = readTallies();
 
-      if (tot > 0) {
-        const score = { correct: Math.min(c, tot), total: tot };
-        t.score     = score;
-        _scores[id] = score;
+      if (o > 0) {
+        const tally = { hit: Math.min(h, o), of: o };
+        ev.tally  = tally;
+        all[id]   = tally;
       } else {
-        t.score = null;
-        delete _scores[id];
+        ev.tally = null;
+        delete all[id];
       }
 
-      _persistScores();
+      writeTallies(all);
       return true;
     },
 
-    /**
-     * Calcule le taux global sur tous les tournois scorés.
-     * @returns {{ correct: number, total: number, pct: number }|null}
-     */
-    globalStats() {
-      let correct = 0, total = 0;
-      TOURNAMENTS.forEach(t => {
-        if (t.score?.total > 0) {
-          correct += t.score.correct;
-          total   += t.score.total;
-        }
+    grandTotal() {
+      let hit = 0, of = 0;
+      EVENTS.forEach(e => {
+        if (e.tally?.of > 0) { hit += e.tally.hit; of += e.tally.of; }
       });
-      if (!total) return null;
-      return { correct, total, pct: Math.round((correct / total) * 100) };
+      if (!of) return null;
+      return { hit, of, pct: Math.round((hit / of) * 100) };
     },
   };
 })();
 
 
 /* --------------------------------------------------------------------------
-   4. HELPERS — fonctions utilitaires pures
+   2. UTILS
    -------------------------------------------------------------------------- */
 
-/**
- * Pourcentage entier à partir d'un score.
- * @param {Score|null|undefined} score
- * @returns {number|null}
- */
-function scorePercent(score) {
-  if (!score?.total) return null;
-  return Math.round((score.correct / score.total) * 100);
+function pctOf(tally) {
+  if (!tally?.of) return null;
+  return Math.round((tally.hit / tally.of) * 100);
 }
 
-/**
- * Variable CSS de couleur selon le pourcentage.
- * @param {number} pct
- * @returns {string}
- */
-function pctColorVar(pct) {
-  if (pct >= CONFIG.SCORE_THRESHOLDS.GOOD) return 'var(--ok)';
-  if (pct >= CONFIG.SCORE_THRESHOLDS.OK)   return 'var(--flash)';
-  return 'var(--ko)';
+function gradeColor(pct) {
+  if (pct >= APP.GRADE.GOOD) return 'var(--go)';
+  if (pct >= APP.GRADE.MID)  return 'var(--warn)';
+  return 'var(--miss)';
 }
 
-/**
- * Échappe une chaîne pour insertion sûre dans un ATTRIBUT HTML.
- * Usage : src="${escAttr(url)}", data-foo="${escAttr(val)}"
- * @param {string} str
- * @returns {string}
- */
 function escAttr(str) {
   return String(str)
     .replace(/&/g, '&amp;')
@@ -154,461 +125,634 @@ function escAttr(str) {
     .replace(/>/g, '&gt;');
 }
 
-/**
- * Échappe une chaîne pour insertion sûre en tant que CONTENU HTML.
- * Usage : <div>${escHTML(texte)}</div>
- * Contrairement à escAttr, préserve les apostrophes et guillemets lisibles.
- * @param {string} str
- * @returns {string}
- */
-function escHTML(str) {
+function escText(str) {
   return String(str)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
 }
 
-/** @returns {string} libellé lisible du type de tournoi */
-function typeLabel(type) {
-  return TYPE_LABELS[type] ?? 'Autre';
+function kindLabel(kind) {
+  return KIND_TEXT[kind] ?? 'Autre';
+}
+
+function logoFor(name) {
+  if (!name) return null;
+  if (TEAM_LOGOS[name]) return TEAM_LOGOS[name];
+  const lower = name.toLowerCase();
+  const key = Object.keys(TEAM_LOGOS).find(k => k.toLowerCase() === lower);
+  return key ? TEAM_LOGOS[key] : null;
+}
+
+/** Jauge de boost segmentée réutilisable (tally, accueil…). */
+function boostMeterHTML(pct, color, size = 10) {
+  const segments = Array.from({ length: size }, (_, i) =>
+    `<span class="boost-seg${i < Math.round((pct / 100) * size) ? ' is-lit' : ''}" style="--seg-color:${color}"></span>`
+  ).join('');
+  return `<div class="boost-meter" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100">${segments}</div>`;
 }
 
 /**
- * Résout le logo d'une équipe depuis le registre TEAMS.
- * Recherche insensible à la casse en fallback.
- * @param {string|null|undefined} name
- * @returns {string|null}
+ * Agrège toutes les stats nécessaires à la page d'accueil :
+ * totaux par saison, par catégorie, meilleur/pire événement,
+ * bilan des pronostics vainqueur, et prochain rendez-vous.
  */
-function getTeamLogo(name) {
-  if (!name) return null;
-  if (TEAMS[name]) return TEAMS[name];
-  const lower = name.toLowerCase();
-  const key = Object.keys(TEAMS).find(k => k.toLowerCase() === lower);
-  return key ? TEAMS[key] : null;
+function computeHomeStats() {
+  const bySeason = {};
+  const byKind   = {};
+  let bestEv  = null;
+  let worstEv = null;
+  let pickHit = 0, pickMiss = 0, pickPending = 0;
+
+  EVENTS.forEach(ev => {
+    const season = String(ev.season);
+    bySeason[season] ??= { hit: 0, of: 0 };
+    byKind[ev.kind]  ??= { hit: 0, of: 0 };
+
+    if (ev.tally?.of > 0) {
+      bySeason[season].hit += ev.tally.hit;
+      bySeason[season].of  += ev.tally.of;
+      byKind[ev.kind].hit  += ev.tally.hit;
+      byKind[ev.kind].of   += ev.tally.of;
+
+      const pct = pctOf(ev.tally);
+      if (!bestEv  || pct > bestEv.pct)  bestEv  = { ev, pct };
+      if (!worstEv || pct < worstEv.pct) worstEv = { ev, pct };
+    }
+
+    if (ev.pick?.mine && ev.pick.mine !== 'TBD') {
+      if (!ev.pick.actual)                        pickPending++;
+      else if (ev.pick.mine === ev.pick.actual)    pickHit++;
+      else                                         pickMiss++;
+    }
+  });
+
+  const liveEvent = EVENTS.find(ev => ev.state === 'live') ?? null;
+  const nextEvent = EVENTS.find(ev => ev.state === 'soon') ?? null;
+
+  return { bySeason, byKind, bestEv, worstEv, pickHit, pickMiss, pickPending, liveEvent, nextEvent };
 }
 
 
 /* --------------------------------------------------------------------------
-   5. LIGHTBOX
+   3. VIEWER — visionneuse plein écran
    -------------------------------------------------------------------------- */
 
-const Lightbox = (() => {
-  let _images = [];
-  let _index  = 0;
+const Viewer = (() => {
+  let roll  = [];
+  let cursor = 0;
 
-  // Références DOM — lazy via getter, résolues une seule fois par l'engine
   const el = {
-    get box()   { return document.getElementById('lightbox'); },
-    get img()   { return document.getElementById('lightbox-img'); },
-    get label() { return document.getElementById('lightbox-label'); },
-    get ctr()   { return document.getElementById('lb-counter'); },
-    get prev()  { return document.getElementById('lb-prev'); },
-    get next()  { return document.getElementById('lb-next'); },
-    get close() { return document.getElementById('lightbox-close'); },
+    get root()  { return document.getElementById('viewer'); },
+    get img()   { return document.getElementById('viewer-img'); },
+    get cap()   { return document.getElementById('viewer-caption'); },
+    get count() { return document.getElementById('viewer-count'); },
+    get prev()  { return document.getElementById('viewer-prev'); },
+    get next()  { return document.getElementById('viewer-next'); },
+    get close() { return document.getElementById('viewer-close'); },
   };
 
-  function _render() {
-    const item = _images[_index];
-    if (!item || !el.img) return;
+  function paint() {
+    const shot = roll[cursor];
+    if (!shot || !el.img) return;
 
-    el.img.src = item.src;   // src est une URL, escAttr non requis
-    el.img.alt = item.label ?? '';
-    if (el.label) el.label.textContent = item.label ?? '';
-    if (el.ctr)   el.ctr.textContent   = `${_index + 1} / ${_images.length}`;
+    el.img.src = shot.src;
+    el.img.alt = shot.caption ?? '';
+    if (el.cap)   el.cap.textContent   = shot.caption ?? '';
+    if (el.count) el.count.textContent = `${cursor + 1} / ${roll.length}`;
 
-    if (el.prev) el.prev.style.opacity = _index === 0                   ? '0.3' : '1';
-    if (el.next) el.next.style.opacity = _index === _images.length - 1  ? '0.3' : '1';
+    if (el.prev) el.prev.disabled = cursor === 0;
+    if (el.next) el.next.disabled = cursor === roll.length - 1;
   }
 
-  function open(images, index = 0) {
-    if (!Array.isArray(images) || !images.length) return;
-    _images = images;
-    _index  = Math.max(0, Math.min(index, images.length - 1));
-    _render();
-    el.box?.classList.add('open');
-    el.box?.removeAttribute('aria-hidden');
+  function open(shots, index = 0) {
+    if (!Array.isArray(shots) || !shots.length) return;
+    roll   = shots;
+    cursor = Math.max(0, Math.min(index, shots.length - 1));
+    paint();
+    el.root?.classList.add('is-open');
+    el.root?.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
   }
 
   function close() {
-    el.box?.classList.remove('open');
-    el.box?.setAttribute('aria-hidden', 'true');
+    el.root?.classList.remove('is-open');
+    el.root?.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
   }
 
-  function prev() { if (_index > 0)                  { _index--; _render(); } }
-  function next() { if (_index < _images.length - 1) { _index++; _render(); } }
+  function step(delta) {
+    const target = cursor + delta;
+    if (target < 0 || target >= roll.length) return;
+    cursor = target;
+    paint();
+  }
 
-  function init() {
+  function bind() {
     el.close?.addEventListener('click', close);
-    el.prev?.addEventListener('click',  prev);
-    el.next?.addEventListener('click',  next);
+    el.prev?.addEventListener('click', () => step(-1));
+    el.next?.addEventListener('click', () => step(1));
 
-    el.box?.addEventListener('click', e => { if (e.target === el.box) close(); });
+    el.root?.addEventListener('click', e => {
+      if (e.target === el.root) close();
+    });
 
     document.addEventListener('keydown', e => {
-      if (!el.box?.classList.contains('open')) return;
-      switch (e.key) {
-        case 'Escape':     close(); break;
-        case 'ArrowLeft':  prev();  break;
-        case 'ArrowRight': next();  break;
-      }
+      if (!el.root?.classList.contains('is-open')) return;
+      if (e.key === 'Escape')     close();
+      if (e.key === 'ArrowLeft')  step(-1);
+      if (e.key === 'ArrowRight') step(1);
     });
   }
 
-  return { open, close, init };
+  return { open, close, bind };
 })();
 
 
 /* --------------------------------------------------------------------------
-   6. RENDERERS — fonctions pures retournant des chaînes HTML
+   4. BLOCKS — gabarits HTML
    -------------------------------------------------------------------------- */
 
-// Registre images par clé de phase — évite JSON.parse à chaque clic
-const _galleryRegistry = new Map();
+// clé `${eventId}::${stageId}` → tableau de shots, pour la Viewer
+const shotsIndex = new Map();
 
-const Renderers = {
+const Blocks = {
 
   /**
-   * Widget de score (lecture ou édition).
-   * @param {Tournament} t
+   * Cadran de score : lecture ou saisie.
+   * @param {EventEntry} ev
    * @param {boolean} editing
-   * @returns {string}
    */
-  scoreWidget(t, editing = false) {
-    const { id, score, status } = t;
+  tally(ev, editing = false) {
+    const { id, tally, state } = ev;
 
     if (editing) {
-      const c   = score?.correct ?? 0;
-      const tot = score?.total   ?? 0;
+      const h = tally?.hit ?? 0;
+      const o = tally?.of  ?? 0;
       return `
-        <div class="score-widget" data-tid="${escAttr(id)}">
-          <div class="sw-input-row">
-            <input type="number" class="si-c" value="${c}"   min="0" max="999" inputmode="numeric" aria-label="Prédictions correctes">
-            <span class="slash" aria-hidden="true">/</span>
-            <input type="number" class="si-t" value="${tot}" min="0" max="999" inputmode="numeric" aria-label="Total prédictions">
-            <button class="sw-ok"     data-action="save-score"   aria-label="Enregistrer">OK</button>
-            <button class="sw-cancel" data-action="cancel-score" aria-label="Annuler">✕</button>
-          </div>
+        <div class="tally-box is-editing" data-eid="${escAttr(id)}">
+          <form class="tally-form" data-action="none">
+            <input type="number" class="tally-input" data-role="hit" value="${h}" min="0" max="999" inputmode="numeric" aria-label="Prédictions justes">
+            <span class="tally-sep" aria-hidden="true">/</span>
+            <input type="number" class="tally-input" data-role="of"  value="${o}" min="0" max="999" inputmode="numeric" aria-label="Total de prédictions">
+            <button type="button" class="tally-save" data-action="commit-tally">Valider</button>
+            <button type="button" class="tally-cancel" data-action="cancel-tally">Annuler</button>
+          </form>
         </div>`;
     }
 
-    if (!score) {
-      if (status === 'upcoming') {
-        return `<div class="score-widget" data-tid="${escAttr(id)}"><div class="sw-empty">À venir</div></div>`;
+    if (!tally) {
+      if (state === 'soon') {
+        return `<div class="tally-box" data-eid="${escAttr(id)}"><p class="tally-empty">Pas encore joué</p></div>`;
       }
-      const label = status === 'ongoing' ? 'En cours' : 'Score non saisi';
+      const msg = state === 'live' ? 'En cours de résolution' : 'Score non saisi';
       return `
-        <div class="score-widget" data-tid="${escAttr(id)}">
-          <div class="sw-empty">${label}</div>
-          <button class="sw-edit" data-action="edit-score">saisir mon score</button>
+        <div class="tally-box" data-eid="${escAttr(id)}">
+          <p class="tally-empty">${msg}</p>
+          <button type="button" class="tally-edit-btn" data-action="edit-tally">Saisir mon score</button>
         </div>`;
     }
 
-    const pct   = scorePercent(score);
-    const color = pctColorVar(pct);
+    const pct   = pctOf(tally);
+    const color = gradeColor(pct);
 
     return `
-      <div class="score-widget" data-tid="${escAttr(id)}">
-        <div class="sw-fraction" style="color:${color}">
-          ${score.correct}<span class="sw-denom">/${score.total}</span>
+      <div class="tally-box" data-eid="${escAttr(id)}">
+        <div class="tally-score" style="color:${color}">
+          ${tally.hit}<span class="tally-of">/${tally.of}</span>
         </div>
-        <div class="sw-pct" style="color:${color}">${pct}%</div>
-        <div class="sw-bar" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100">
-          <div class="sw-bar-fill" style="width:${pct}%;background:${color}"></div>
-        </div>
+        <div class="tally-pct" style="color:${color}">${pct}% de réussite</div>
+        ${boostMeterHTML(pct, color)}
       </div>`;
   },
 
   /**
-   * Ligne de champion prédit / réel.
-   * @param {Champion} ch
-   * @returns {string}
+   * Duel pronostic / résultat réel.
+   * @param {Pick} pick
    */
-  champion(ch) {
-    if (!ch?.pred) return '';
+  pick(pick) {
+    if (!pick?.mine) return '';
 
-    const status = !ch.result
-      ? 'unknown'
-      : ch.pred === ch.result ? 'correct' : 'wrong';
+    const verdict = !pick.actual
+      ? 'pending'
+      : pick.mine === pick.actual ? 'hit' : 'miss';
 
-    const predLogoSrc   = getTeamLogo(ch.pred);
-    const resultLogoSrc = getTeamLogo(ch.result);
-    const predLogo   = predLogoSrc   ? `<img src="${escAttr(predLogoSrc)}"   class="champ-team-logo" alt="" loading="lazy">` : '';
-    const resultLogo = resultLogoSrc ? `<img src="${escAttr(resultLogoSrc)}" class="champ-team-logo" alt="" loading="lazy">` : '';
+    const mineLogo   = logoFor(pick.mine);
+    const actualLogo = logoFor(pick.actual);
+    const mineImg   = mineLogo   ? `<img src="${escAttr(mineLogo)}" class="pick-logo" alt="" loading="lazy">`   : '';
+    const actualImg = actualLogo ? `<img src="${escAttr(actualLogo)}" class="pick-logo" alt="" loading="lazy">` : '';
 
-    const resultHTML = ch.result ? `
-      <div class="champ-real">
-        → réel :
-        <span class="champ-identity">${resultLogo}${ch.result}</span>
+    const actualHTML = pick.actual ? `
+      <div class="pick-actual">
+        <span class="pick-arrow" aria-hidden="true">→</span>
+        <span class="pick-tag">Vainqueur réel</span>
+        <span class="pick-name">${actualImg}${escText(pick.actual)}</span>
       </div>` : '';
 
     return `
-      <div class="champion-row">
-        <div class="champ-dot ${status}" aria-label="Prédiction ${status}"></div>
-        <div class="champ-team-wrap">
-          <div class="champ-label">Champion prédit</div>
-          <div class="champ-identity">${predLogo}<span class="champ-name">${ch.pred}</span></div>
+      <div class="pick-row" data-verdict="${verdict}">
+        <span class="pick-light" aria-label="Pronostic ${verdict}"></span>
+        <div class="pick-mine">
+          <span class="pick-tag">Mon pronostic</span>
+          <span class="pick-name">${mineImg}${escText(pick.mine)}</span>
         </div>
-        ${resultHTML}
+        ${actualHTML}
       </div>`;
   },
 
-  /**
-   * Note éditoriale sur une image de galerie.
-   * @param {string|undefined} note
-   * @returns {string}
-   */
-  imageNote(note) {
-    if (!note) return '';
-    return `
-      <div class="gc-note" role="note">
-        <span class="gc-note-icon" aria-hidden="true">📌</span>
-        ${escHTML(note)}
-      </div>`;
+  flag(text) {
+    if (!text) return '';
+    return `<p class="shot-flag"><span aria-hidden="true">▸</span> ${escText(text)}</p>`;
   },
 
   /**
-   * Galerie d'images pour une phase donnée.
-   * @param {Phase} phase
-   * @param {Tournament} t
-   * @returns {string}
+   * Grille d'images pour une étape.
+   * @param {Stage} stage
+   * @param {EventEntry} ev
    */
-  gallery(phase, t) {
-    const imgs = phase.imgs ?? [];
-    let html = '';
+  shots(stage, ev) {
+    const shots = stage.shots ?? [];
 
-    if (phase.desc) {
-      html += `<div class="phase-description">${escHTML(phase.desc)}</div>`;
-    }
-
-    if (!imgs.length) {
-      return html + `
-        <div class="gallery-grid">
-          <div class="gallery-card no-img" role="presentation">
-            <div class="no-img-icon" aria-hidden="true">📷</div>
-            <div class="no-img-label">Aucune image disponible</div>
+    if (!shots.length) {
+      return `
+        <div class="shots-grid">
+          <div class="shot-empty">
+            <span class="shot-empty-icon" aria-hidden="true">▢</span>
+            <span>Rien à montrer pour l'instant</span>
           </div>
         </div>`;
     }
 
-    const registryKey = `${t.id}::${phase.id}`;
-    _galleryRegistry.set(registryKey, imgs);
+    const key = `${ev.id}::${stage.id}`;
+    shotsIndex.set(key, shots);
 
-    const badge = t.status === 'ongoing'
-      ? `<div class="results-badge rb-ongoing">En cours</div>`
-      : `<div class="results-badge rb-correct">Terminé</div>`;
+    const tagText = ev.state === 'live' ? 'En cours' : 'Résolu';
+    const tagCls  = ev.state === 'live' ? 'is-live' : 'is-done';
 
-    const cards = imgs.map((img, i) => `
-      <button type="button" class="gallery-card${img.note ? ' has-note' : ''}"
-              data-gallery-key="${escAttr(registryKey)}"
-              data-index="${i}"
-              aria-label="Agrandir : ${escAttr(img.label ?? '')}">
-        <img src="${escAttr(img.src)}" alt="${escAttr(img.label ?? '')}" loading="lazy">
-        <div class="gc-label">${escHTML(img.label ?? '')}</div>
-        ${this.imageNote(img.note)}
-        ${badge}
-        <div class="gc-overlay" aria-hidden="true"><div class="gc-zoom-icon">⤢</div></div>
+    const cards = shots.map((shot, i) => `
+      <button type="button" class="shot-card" data-shots-key="${escAttr(key)}" data-shot-index="${i}"
+              aria-label="Agrandir : ${escAttr(shot.caption ?? '')}">
+        <span class="shot-tag ${tagCls}">${tagText}</span>
+        <span class="shot-thumb">
+          <img src="${escAttr(shot.src)}" alt="${escAttr(shot.caption ?? '')}" loading="lazy">
+        </span>
+        <span class="shot-caption">${escText(shot.caption ?? '')}</span>
+        ${this.flag(shot.flag)}
       </button>`).join('');
 
-    return html + `<div class="gallery-grid">${cards}</div>`;
+    return `<div class="shots-grid">${cards}</div>`;
   },
 
   /**
-   * Page complète d'un tournoi.
-   * @param {Tournament} t
-   * @returns {string}
+   * Une étape sous forme d'item d'accordéon.
+   * @param {Stage} stage
+   * @param {EventEntry} ev
+   * @param {boolean} open
    */
-  tournament(t) {
-    const isUpcoming = t.status === 'upcoming';
-
-    const tabs = t.phases.map((ph, i) => `
-      <button class="phase-tab${i === 0 ? ' active' : ''}"
-              data-tid="${escAttr(t.id)}"
-              data-phid="${escAttr(ph.id)}"
-              role="tab"
-              aria-selected="${i === 0}"
-              aria-controls="panel-${escAttr(t.id)}-${escAttr(ph.id)}">
-        ${ph.label}
-      </button>`).join('');
-
-    const panels = t.phases.map((ph, i) => `
-      <div class="phase-panel${i === 0 ? ' active' : ''}"
-           id="panel-${escAttr(t.id)}-${escAttr(ph.id)}"
-           role="tabpanel">
-        <div class="gallery-section">
-          <div class="gallery-section-title">Détails &amp; Prédictions</div>
-          ${this.gallery(ph, t)}
+  stageItem(stage, ev, open) {
+    return `
+      <section class="stage-item${open ? ' is-open' : ''}" id="stage-${escAttr(ev.id)}-${escAttr(stage.id)}">
+        <button type="button" class="stage-item-head" data-action="toggle-stage"
+                data-eid="${escAttr(ev.id)}" data-sid="${escAttr(stage.id)}"
+                aria-expanded="${open}">
+          <span class="stage-item-title">${escText(stage.title)}</span>
+          <span class="stage-item-count">${(stage.shots ?? []).length || '—'}</span>
+          <span class="stage-item-caret" aria-hidden="true"></span>
+        </button>
+        <div class="stage-item-body">
+          ${this.shots(stage, ev)}
         </div>
-      </div>`).join('');
+      </section>`;
+  },
+
+  /**
+   * Page complète d'un événement.
+   * @param {EventEntry} ev
+   */
+  event(ev) {
+    const upcoming = ev.state === 'soon';
+
+    const stages = ev.stages.map((st, i) => this.stageItem(st, ev, i === 0)).join('');
 
     return `
-      <div class="tournament-page" id="page-${escAttr(t.id)}" data-year="${t.year}" data-type="${escAttr(t.type)}">
+      <article class="event-panel" id="event-${escAttr(ev.id)}" data-season="${ev.season}" data-kind="${escAttr(ev.kind)}">
 
-        <div class="t-top">
-          <div class="t-banner">
-            <img src="${escAttr(t.logo)}" class="t-header-logo" alt="Logo ${escAttr(t.name)}">
+        <header class="event-head">
+          <div class="event-head-banner">
+            <img src="${escAttr(ev.banner)}" class="event-head-logo" alt="Logo ${escAttr(ev.name)}">
           </div>
 
-          <div class="t-info-bar">
-            <div class="t-title-wrap">
-              <div class="t-title">${escHTML(t.name)}</div>
-              <div class="t-meta-row">
-                <div class="t-meta">${escHTML(t.date)}</div>
-                <div class="tournament-type">${typeLabel(t.type)}</div>
-                <div class="status-pill ${escAttr(t.status)}" aria-label="Statut : ${escAttr(STATUS_LABELS[t.status] ?? t.status)}">
-                  <div class="dot" aria-hidden="true"></div>${STATUS_LABELS[t.status] ?? t.status}
-                </div>
+          <div class="event-head-info">
+            <div class="event-head-titling">
+              <h2 class="event-title">${escText(ev.name)}</h2>
+              <div class="event-tags">
+                <span class="event-dates">${escText(ev.dates)}</span>
+                <span class="tag tag-kind">${kindLabel(ev.kind)}</span>
+                <span class="tag tag-status" data-state="${escAttr(ev.state)}">
+                  <span class="tag-dot" aria-hidden="true"></span>${STATUS_TEXT[ev.state] ?? ev.state}
+                </span>
               </div>
-              ${!isUpcoming ? this.champion(t.champion) : ''}
+              ${!upcoming ? this.pick(ev.pick) : ''}
             </div>
-            ${!isUpcoming ? `<div id="sw-${escAttr(t.id)}">${this.scoreWidget(t)}</div>` : ''}
+            ${!upcoming ? `<div id="tallyhost-${escAttr(ev.id)}">${this.tally(ev)}</div>` : ''}
           </div>
+        </header>
+
+        <div class="stage-accordion">${stages}</div>
+      </article>`;
+  },
+
+  /**
+   * Carte compacte d'un événement (meilleur/pire, prochain rendez-vous…).
+   * @param {EventEntry} ev
+   * @param {object} [opts]
+   */
+  homeEventCard(ev, opts = {}) {
+    const { pct = null, eyebrow = '', cta = null } = opts;
+    const color = pct !== null ? gradeColor(pct) : null;
+
+    return `
+      <div class="home-ev-card">
+        <div class="home-ev-banner">
+          <img src="${escAttr(ev.banner)}" alt="" loading="lazy">
         </div>
-
-        ${t.description ?? ''}
-
-        <div class="phase-tabs" role="tablist">${tabs}</div>
-        ${panels}
+        <div class="home-ev-body">
+          ${eyebrow ? `<p class="home-ev-eyebrow">${escText(eyebrow)}</p>` : ''}
+          <p class="home-ev-name">${escText(ev.name)}</p>
+          <p class="home-ev-dates">${escText(ev.dates)}</p>
+          ${pct !== null ? `<p class="home-ev-pct" style="color:${color}">${pct}%</p>` : ''}
+          ${cta ? `<button type="button" class="home-ev-cta" data-action="goto-event" data-eid="${escAttr(ev.id)}" data-season="${ev.season}">${escText(cta)}</button>` : ''}
+        </div>
       </div>`;
+  },
+
+  /**
+   * Page d'accueil : bilan global, par saison, par catégorie,
+   * meilleur/pire pronostic, bilan des picks et prochain rendez-vous.
+   */
+  home() {
+    const totals = State.grandTotal();
+    const stats  = computeHomeStats();
+
+    const heroHTML = totals ? `
+      <div class="home-hero-score">
+        <div class="home-hero-pct" style="color:${gradeColor(totals.pct)}">${totals.pct}<span>%</span></div>
+        <div class="home-hero-count">${totals.hit}<span class="home-hero-of">/${totals.of}</span> pronostics justes</div>
+        ${boostMeterHTML(totals.pct, gradeColor(totals.pct), 16)}
+      </div>` : `
+      <div class="home-hero-score home-hero-empty">
+        <p>Aucun score saisi pour l'instant.</p>
+        <p class="home-hero-hint">Rends-toi sur un événement pour enregistrer ton premier pronostic.</p>
+      </div>`;
+
+    const seasonRows = State.seasons().map(season => {
+      const t   = stats.bySeason[season];
+      const pct = t?.of ? Math.round((t.hit / t.of) * 100) : null;
+      const color = pct !== null ? gradeColor(pct) : 'var(--ink-mut)';
+      return `
+        <div class="home-bar-row">
+          <span class="home-bar-label">${escText(season)}</span>
+          <div class="home-bar-track">
+            <div class="home-bar-fill" style="width:${pct ?? 0}%; background:${color}"></div>
+          </div>
+          <span class="home-bar-value" style="color:${color}">${pct !== null ? `${pct}%` : '—'}</span>
+        </div>`;
+    }).join('');
+
+    const kindOrder = ['major', 'worlds', 'qualifier', 'other'];
+    const kindRows = kindOrder
+      .filter(k => stats.byKind[k])
+      .map(kind => {
+        const t   = stats.byKind[kind];
+        const pct = t?.of ? Math.round((t.hit / t.of) * 100) : null;
+        const color = pct !== null ? gradeColor(pct) : 'var(--ink-mut)';
+        return `
+          <div class="home-bar-row">
+            <span class="home-bar-label">${escText(kindLabel(kind))}</span>
+            <div class="home-bar-track">
+              <div class="home-bar-fill" style="width:${pct ?? 0}%; background:${color}"></div>
+            </div>
+            <span class="home-bar-value" style="color:${color}">${pct !== null ? `${pct}%` : '—'}</span>
+          </div>`;
+      }).join('');
+
+    const bestWorstHTML = (stats.bestEv || stats.worstEv) ? `
+      <section class="home-card home-card-wide">
+        <h2 class="home-card-title">Meilleur &amp; pire pronostic</h2>
+        <div class="home-ev-pair">
+          ${stats.bestEv  ? this.homeEventCard(stats.bestEv.ev,  { pct: stats.bestEv.pct,  eyebrow: 'Meilleur score' }) : ''}
+          ${stats.worstEv && stats.worstEv.ev.id !== stats.bestEv?.ev.id
+            ? this.homeEventCard(stats.worstEv.ev, { pct: stats.worstEv.pct, eyebrow: 'Pire score' }) : ''}
+        </div>
+      </section>` : '';
+
+    const totalPicks = stats.pickHit + stats.pickMiss + stats.pickPending;
+    const picksHTML = totalPicks ? `
+      <section class="home-card">
+        <h2 class="home-card-title">Pronostics vainqueur</h2>
+        <div class="home-picks-row">
+          <div class="home-pick-stat" data-verdict="hit"><span class="home-pick-dot"></span>${stats.pickHit} juste${stats.pickHit > 1 ? 's' : ''}</div>
+          <div class="home-pick-stat" data-verdict="miss"><span class="home-pick-dot"></span>${stats.pickMiss} raté${stats.pickMiss > 1 ? 's' : ''}</div>
+          <div class="home-pick-stat" data-verdict="pending"><span class="home-pick-dot"></span>${stats.pickPending} en attente</div>
+        </div>
+      </section>` : '';
+
+    const spotlightEvent = stats.liveEvent ?? stats.nextEvent;
+    const spotlightHTML = spotlightEvent ? `
+      <section class="home-card home-card-wide home-card-spotlight">
+        <h2 class="home-card-title">${stats.liveEvent ? 'En ce moment' : 'Prochain rendez-vous'}</h2>
+        ${this.homeEventCard(spotlightEvent, {
+          eyebrow: stats.liveEvent ? 'En cours' : 'À venir',
+          cta: stats.liveEvent ? "Voir l'événement" : 'Voir la fiche',
+        })}
+      </section>` : '';
+
+    return `
+      <section class="home-panel" id="home-panel">
+        <header class="home-hero">
+          <div class="home-hero-main">
+            <p class="home-kicker" aria-hidden="true">Vue d'ensemble</p>
+            <h1 class="home-title">Bilan des pronostics</h1>
+            <p class="home-sub">Toutes saisons et catégories confondues.</p>
+          </div>
+          ${heroHTML}
+        </header>
+
+        <div class="home-grid">
+          <section class="home-card">
+            <h2 class="home-card-title">Par saison</h2>
+            <div class="home-bar-list">${seasonRows || '<p class="home-empty">Rien à afficher.</p>'}</div>
+          </section>
+
+          <section class="home-card">
+            <h2 class="home-card-title">Par catégorie</h2>
+            <div class="home-bar-list">${kindRows || '<p class="home-empty">Rien à afficher.</p>'}</div>
+          </section>
+
+          ${picksHTML}
+          ${bestWorstHTML}
+          ${spotlightHTML}
+        </div>
+      </section>`;
   },
 };
 
-// Alias de compatibilité — permet à View.refreshScoreWidget d'appeler
-// renderScoreWidget(t) sans avoir à être modifié.
-const renderScoreWidget = (t, editing) => Renderers.scoreWidget(t, editing);
-
 
 /* --------------------------------------------------------------------------
-   7. VIEW — couche de manipulation DOM
+   5. SCREEN — écriture DOM
    -------------------------------------------------------------------------- */
 
-const View = (() => {
+const Screen = (() => {
   const $ = id => document.getElementById(id);
 
   return {
 
-    buildNav() {
-      const nav = $('main-nav');
-      if (!nav) return;
+    buildTicker() {
+      const host = $('rail-ticker');
+      if (!host) return;
 
-      const fragment = document.createDocumentFragment();
-      Store.byYear(Store.getCategory()).forEach(t => {
-        const pct    = scorePercent(t.score);
-        const active = t.id === Store.getActiveTid();
+      const totals = State.grandTotal();
+      if (!totals) { host.replaceChildren(); return; }
 
-        const btn       = document.createElement('button');
-        btn.className   = `nav-btn${active ? ' active' : ''}`;
-        btn.dataset.tid = t.id;
-
-        const logoEl     = document.createElement('img');
-        logoEl.src       = t.logo;
-        logoEl.className = 'nav-logo';
-        logoEl.alt       = '';
-
-        const textEl           = document.createElement('span');
-        textEl.className       = 'nav-btn-text';
-        textEl.textContent     = t.name;
-
-        btn.append(logoEl, textEl);
-
-        if (pct !== null) {
-          const pctEl           = document.createElement('span');
-          pctEl.className       = 'nav-pct';
-          pctEl.textContent     = `${pct}%`;
-          btn.appendChild(pctEl);
-        }
-
-        if (t.status === 'ongoing') {
-          const dot = document.createElement('span');
-          dot.className = 'nav-live';
-          dot.setAttribute('aria-label', 'En cours');
-          btn.appendChild(dot);
-        }
-
-        fragment.appendChild(btn);
-      });
-
-      nav.replaceChildren(fragment);
-    },
-
-    buildGlobalStats() {
-      const el = $('global-stats');
-      if (!el) return;
-
-      const stats = Store.globalStats();
-      if (!stats) { el.replaceChildren(); return; }
-
-      const color = pctColorVar(stats.pct);
-      el.innerHTML = `
-        <div class="hstat">
-          <div class="val" style="color:${color}">${stats.pct}%</div>
-          <div class="lbl">Global</div>
+      const color = gradeColor(totals.pct);
+      host.innerHTML = `
+        <div class="ticker-item">
+          <div class="ticker-value" style="color:${color}">${totals.pct}%</div>
+          <div class="ticker-label">Réussite globale</div>
         </div>
-        <div class="hstat">
-          <div class="val">
-            ${stats.correct}<span style="font-size:1.2rem;color:rgba(242,239,232,0.35)">/${stats.total}</span>
-          </div>
-          <div class="lbl">Prédictions</div>
+        <div class="ticker-item">
+          <div class="ticker-value">${totals.hit}<span class="ticker-of">/${totals.of}</span></div>
+          <div class="ticker-label">Pronostics posés</div>
         </div>`;
     },
 
-    refreshScoreWidget(tid) {
-      const t  = Store.get(tid);
-      const el = $(`sw-${tid}`);
-      if (!t || !el) return;
-      el.innerHTML = renderScoreWidget(t);
-    },
+    buildRail() {
+      const list = $('event-list');
+      if (!list) return;
 
-    switchTournament(id) {
-      document.querySelector('.tournament-page.active')?.classList.remove('active');
-      document.getElementById(`page-${id}`)?.classList.add('active');
-      document.querySelector('.nav-btn.active')?.classList.remove('active');
-      document.querySelector(`.nav-btn[data-tid="${CSS.escape(id)}"]`)?.classList.add('active');
-    },
+      const frag = document.createDocumentFragment();
 
-    switchCategory(year) {
-      const yearStr = String(year);
-      document.querySelectorAll('.category-btn').forEach(b => {
-        const isActive = b.dataset.category === yearStr;
-        b.classList.toggle('active', isActive);
-        b.setAttribute('aria-pressed', String(isActive));
+      State.inSeason(State.season()).forEach(ev => {
+        const pct    = pctOf(ev.tally);
+        const active = ev.id === State.current();
+
+        const item = document.createElement('button');
+        item.type = 'button';
+        item.className = `event-item${active ? ' is-active' : ''}`;
+        item.dataset.eid = ev.id;
+
+        const logo = document.createElement('img');
+        logo.src = ev.banner;
+        logo.className = 'event-item-logo';
+        logo.alt = '';
+
+        const name = document.createElement('span');
+        name.className = 'event-item-name';
+        name.textContent = ev.name;
+
+        item.append(logo, name);
+
+        if (ev.state === 'live') {
+          const dot = document.createElement('span');
+          dot.className = 'event-item-live';
+          dot.setAttribute('aria-label', 'En cours');
+          item.appendChild(dot);
+        }
+
+        if (pct !== null) {
+          const badge = document.createElement('span');
+          badge.className = 'event-item-pct';
+          badge.textContent = `${pct}%`;
+          item.appendChild(badge);
+        }
+
+        frag.appendChild(item);
       });
-      document.querySelectorAll('.category-section').forEach(s =>
-        s.classList.toggle('active', s.id === `category-${yearStr}`));
+
+      list.replaceChildren(frag);
     },
 
-    switchPhase(tid, phid) {
-      const root = document.getElementById(`page-${tid}`);
-      if (!root) return;
+    refreshTally(id) {
+      const ev   = State.find(id);
+      const host = $(`tallyhost-${id}`);
+      if (!ev || !host) return;
+      host.innerHTML = Blocks.tally(ev);
+    },
 
-      root.querySelectorAll('.phase-tab').forEach(b => {
-        const isTarget = b.dataset.phid === phid;
-        b.classList.toggle('active', isTarget);
-        b.setAttribute('aria-selected', String(isTarget));
+    goEvent(id) {
+      const ev = State.find(id);
+      if (ev) {
+        const s = String(ev.season);
+        $('home-panel')?.classList.remove('is-active');
+        $('home-link')?.classList.remove('is-active');
+        document.querySelectorAll('.season-panel').forEach(p =>
+          p.classList.toggle('is-active', p.id === `season-${s}`));
+        document.querySelectorAll('.season-opt').forEach(b => {
+          const active = b.dataset.season === s;
+          b.classList.toggle('is-active', active);
+          b.setAttribute('aria-pressed', String(active));
+        });
+      }
+
+      document.querySelector('.event-panel.is-active')?.classList.remove('is-active');
+      $(`event-${id}`)?.classList.add('is-active');
+      document.querySelector('.event-item.is-active')?.classList.remove('is-active');
+      document.querySelector(`.event-item[data-eid="${CSS.escape(id)}"]`)?.classList.add('is-active');
+    },
+
+    goSeason(season) {
+      const s = String(season);
+      $('home-panel')?.classList.remove('is-active');
+      $('home-link')?.classList.remove('is-active');
+      document.querySelectorAll('.season-opt').forEach(b => {
+        const active = b.dataset.season === s;
+        b.classList.toggle('is-active', active);
+        b.setAttribute('aria-pressed', String(active));
       });
-      root.querySelectorAll('.phase-panel').forEach(p =>
-        p.classList.toggle('active', p.id === `panel-${tid}-${phid}`));
+      document.querySelectorAll('.season-panel').forEach(p =>
+        p.classList.toggle('is-active', p.id === `season-${s}`));
+    },
+
+    goHome() {
+      document.querySelectorAll('.season-panel').forEach(p => p.classList.remove('is-active'));
+      document.querySelectorAll('.season-opt').forEach(b => {
+        b.classList.remove('is-active');
+        b.setAttribute('aria-pressed', 'false');
+      });
+      document.querySelector('.event-item.is-active')?.classList.remove('is-active');
+      $('home-panel')?.classList.add('is-active');
+      $('home-link')?.classList.add('is-active');
+    },
+
+    toggleStage(eid, sid) {
+      const panel = $(`event-${eid}`);
+      if (!panel) return;
+      panel.querySelectorAll('.stage-item').forEach(item => {
+        const isTarget = item.id === `stage-${eid}-${sid}`;
+        const willOpen = isTarget ? !item.classList.contains('is-open') : false;
+        item.classList.toggle('is-open', willOpen);
+        item.querySelector('.stage-item-head')?.setAttribute('aria-expanded', String(willOpen));
+      });
     },
 
     mount() {
-      const main = document.getElementById('main-content');
-      if (!main) return;
+      const stage = $('stage');
+      if (!stage) return;
 
-      const years = [...new Set(TOURNAMENTS.map(t => String(t.year)))];
-      const cat   = Store.getCategory();
+      const seasons = State.seasons();
+      const active  = State.season();
 
-      main.innerHTML = years.map(year => `
-        <section class="category-section${year === cat ? ' active' : ''}" id="category-${year}">
-          <h2 class="category-title">${year}</h2>
-          <div class="category-content">
-            ${Store.byYear(year).map(t => Renderers.tournament(t)).join('')}
+      stage.innerHTML = Blocks.home() + seasons.map(season => `
+        <section class="season-panel${season === active ? ' is-active' : ''}" id="season-${season}">
+          <h1 class="season-title">Saison <span>${season}</span></h1>
+          <div class="season-body">
+            ${State.inSeason(season).map(ev => Blocks.event(ev)).join('')}
           </div>
         </section>`).join('');
 
-      document.querySelectorAll('.category-btn').forEach(b => {
-        const isActive = b.dataset.category === cat;
-        b.classList.toggle('active', isActive);
+      document.querySelectorAll('.season-opt').forEach(b => {
+        const isActive = b.dataset.season === active;
+        b.classList.toggle('is-active', isActive);
         b.setAttribute('aria-pressed', String(isActive));
       });
     },
@@ -617,90 +761,103 @@ const View = (() => {
 
 
 /* --------------------------------------------------------------------------
-   8. CONTROLLER — orchestre Store ↔ View
+   6. ACTIONS — orchestration State ↔ Screen
    -------------------------------------------------------------------------- */
 
-const Controller = {
+const Actions = {
 
-  selectTournament(id) {
-    if (!Store.get(id)) return;
-    Store.setActiveTid(id);
-    View.switchTournament(id);
+  goHome() {
+    Screen.goHome();
   },
 
-  selectCategory(year) {
-    Store.setCategory(year);
-    View.switchCategory(year);
-    View.buildNav();
-
-    const saved     = Store.getActiveTid();
-    const inYear    = Store.byYear(year);
-    const candidate = inYear.find(t => t.id === saved) ?? inYear[0];
-    if (candidate) this.selectTournament(candidate.id);
+  goEvent(id) {
+    if (!State.find(id)) return;
+    State.setCurrent(id);
+    Screen.goEvent(id);
   },
 
-  editScore(tid) {
-    const t  = Store.get(tid);
-    const el = document.getElementById(`sw-${tid}`);
-    if (!t || !el) return;
-    el.innerHTML = Renderers.scoreWidget(t, true);
-    el.querySelector('.si-c')?.focus();
+  goSeason(season) {
+    State.setSeason(season);
+    Screen.goSeason(season);
+    Screen.buildRail();
+
+    const saved = State.current();
+    const pool  = State.inSeason(season);
+    const pick  = pool.find(e => e.id === saved) ?? pool[0];
+    if (pick) this.goEvent(pick.id);
   },
 
-  cancelScore(tid) {
-    View.refreshScoreWidget(tid);
+  editTally(id) {
+    const ev   = State.find(id);
+    const host = document.getElementById(`tallyhost-${id}`);
+    if (!ev || !host) return;
+    host.innerHTML = Blocks.tally(ev, true);
+    host.querySelector('[data-role="hit"]')?.focus();
   },
 
-  saveScore(tid) {
-    const widget = document.getElementById(`sw-${tid}`)?.querySelector('.score-widget');
-    if (!widget) return;
+  cancelTally(id) {
+    Screen.refreshTally(id);
+  },
 
-    const c   = Number(widget.querySelector('.si-c')?.value);
-    const tot = Number(widget.querySelector('.si-t')?.value);
-    if (!Number.isFinite(c) || !Number.isFinite(tot)) return;
+  commitTally(id) {
+    const box = document.getElementById(`tallyhost-${id}`)?.querySelector('.tally-box');
+    if (!box) return;
 
-    Store.setScore(tid, c, tot);
-    View.refreshScoreWidget(tid);
-    View.buildNav();
-    View.buildGlobalStats();
+    const hit = Number(box.querySelector('[data-role="hit"]')?.value);
+    const of  = Number(box.querySelector('[data-role="of"]')?.value);
+    if (!Number.isFinite(hit) || !Number.isFinite(of)) return;
+
+    State.recordTally(id, hit, of);
+    Screen.refreshTally(id);
+    Screen.buildRail();
+    Screen.buildTicker();
   },
 };
 
 
 /* --------------------------------------------------------------------------
-   9. DÉLÉGATION D'ÉVÉNEMENTS
+   7. DÉLÉGATION D'ÉVÉNEMENTS
    -------------------------------------------------------------------------- */
 
-function initEventDelegation() {
+function wireEvents() {
   document.addEventListener('click', e => {
 
-    const categoryBtn = e.target.closest('.category-btn');
-    if (categoryBtn) { Controller.selectCategory(categoryBtn.dataset.category); return; }
+    const homeBtn = e.target.closest('#home-link');
+    if (homeBtn) { Actions.goHome(); return; }
 
-    const navBtn = e.target.closest('.nav-btn');
-    if (navBtn?.dataset.tid) { Controller.selectTournament(navBtn.dataset.tid); return; }
+    const gotoBtn = e.target.closest('[data-action="goto-event"]');
+    if (gotoBtn?.dataset.eid) {
+      Actions.goSeason(gotoBtn.dataset.season);
+      Actions.goEvent(gotoBtn.dataset.eid);
+      return;
+    }
 
-    const phaseTab = e.target.closest('.phase-tab');
-    if (phaseTab) { View.switchPhase(phaseTab.dataset.tid, phaseTab.dataset.phid); return; }
+    const seasonBtn = e.target.closest('.season-opt');
+    if (seasonBtn) { Actions.goSeason(seasonBtn.dataset.season); return; }
 
-    // Gallery card — résolution depuis le registre, pas de JSON decode
-    const card = e.target.closest('.gallery-card:not(.no-img)');
+    const eventBtn = e.target.closest('.event-item');
+    if (eventBtn?.dataset.eid) { Actions.goEvent(eventBtn.dataset.eid); return; }
+
+    const stageHead = e.target.closest('[data-action="toggle-stage"]');
+    if (stageHead) { Screen.toggleStage(stageHead.dataset.eid, stageHead.dataset.sid); return; }
+
+    const card = e.target.closest('.shot-card');
     if (card) {
-      const images = _galleryRegistry.get(card.dataset.galleryKey);
-      if (images?.length) Lightbox.open(images, parseInt(card.dataset.index, 10) || 0);
+      const shots = shotsIndex.get(card.dataset.shotsKey);
+      if (shots?.length) Viewer.open(shots, parseInt(card.dataset.shotIndex, 10) || 0);
       return;
     }
 
     const actionBtn = e.target.closest('[data-action]');
     if (actionBtn) {
-      const tid = e.target.closest('.score-widget')?.dataset.tid
-               ?? actionBtn.closest('[id^="sw-"]')?.id.replace(/^sw-/, '');
-      if (!tid) return;
+      const eid = actionBtn.closest('.tally-box')?.dataset.eid
+               ?? actionBtn.closest('[id^="tallyhost-"]')?.id.replace(/^tallyhost-/, '');
+      if (!eid) return;
 
       switch (actionBtn.dataset.action) {
-        case 'edit-score':   Controller.editScore(tid);   break;
-        case 'cancel-score': Controller.cancelScore(tid); break;
-        case 'save-score':   Controller.saveScore(tid);   break;
+        case 'edit-tally':   Actions.editTally(eid);   break;
+        case 'cancel-tally': Actions.cancelTally(eid); break;
+        case 'commit-tally': Actions.commitTally(eid); break;
       }
     }
   });
@@ -708,21 +865,22 @@ function initEventDelegation() {
 
 
 /* --------------------------------------------------------------------------
-   10. BOOTSTRAP
+   8. BOOT
    -------------------------------------------------------------------------- */
 
-function initApp() {
-  View.mount();
-  View.buildNav();
-  View.buildGlobalStats();
-  Lightbox.init();
-  initEventDelegation();
+function boot() {
+  Screen.mount();
+  Screen.buildRail();
+  Screen.buildTicker();
+  Viewer.bind();
+  wireEvents();
 
-  const saved  = Store.getActiveTid();
-  const cat    = Store.getCategory();
-  const inYear = Store.byYear(cat);
-  const target = (saved && inYear.find(t => t.id === saved)) ? saved : inYear[0]?.id;
-  if (target) Controller.selectTournament(target);
+  const saved = State.current();
+  const pool  = State.inSeason(State.season());
+  const start = (saved && pool.find(e => e.id === saved)) ? saved : pool[0]?.id;
+  if (start) State.setCurrent(start);
+
+  Actions.goHome();
 }
 
-initApp();
+boot();
