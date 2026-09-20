@@ -22,14 +22,22 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Oswald:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=3">
 </head>
 <body>
   <a class="skip-link" href="#stage">Aller au contenu</a>
 
+  <header class="mobile-bar">
+    <button type="button" class="mobile-toggle" id="mobile-toggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="rail">
+      <span></span><span></span><span></span>
+    </button>
+    <span class="mobile-bar-title">Oni<span>RLCS</span></span>
+  </header>
+  <div class="rail-backdrop" id="rail-backdrop" hidden></div>
+
   <div class="app-shell">
 
-    <header class="rail" role="banner">
+    <header class="rail" id="rail" role="banner">
       <button type="button" class="rail-brand rail-brand-link" id="home-link" aria-label="Accueil — vue d'ensemble">
         <p class="rail-kicker" aria-hidden="true">Rocket League Championship Series</p>
         <h1 class="rail-name">Oni<span>RLCS</span></h1>
@@ -43,11 +51,28 @@
         <button type="button" class="season-opt" data-season="2026" aria-pressed="false">2026</button>
       </div>
 
+      <div class="rail-search">
+        <input type="search" id="event-search" class="rail-search-input" placeholder="Rechercher un événement…" aria-label="Rechercher un événement">
+      </div>
+
       <nav class="event-list" id="event-list" aria-label="Événements de la saison"></nav>
     </header>
 
     <main class="stage" id="stage" tabindex="-1"></main>
 
+  </div>
+
+  <button type="button" class="admin-fab" id="admin-fab" hidden>+ Event</button>
+
+  <div id="admin-modal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" data-action="admin-close"></div>
+    <div class="modal-panel admin-panel" role="dialog" aria-modal="true" aria-label="Générateur d'événement">
+      <div class="modal-head">
+        <h2>Générateur d'événement</h2>
+        <button type="button" class="modal-close" data-action="admin-close" aria-label="Fermer">✕</button>
+      </div>
+      <div class="modal-body" id="admin-body"></div>
+    </div>
   </div>
 
   <div id="viewer" role="dialog" aria-modal="true" aria-label="Aperçu de l'image" aria-hidden="true">
@@ -66,7 +91,7 @@
     </nav>
   </div>
 
-  <script src="id.js" defer></script>
-  <script src="data.js" defer></script>
+  <script src="id.js?v=3" defer></script>
+  <script src="data.js?v=3" defer></script>
 </body>
 </html>

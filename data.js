@@ -64,6 +64,12 @@ const State = (() => {
     setCurrent(id) {
       current = id;
       sessionStorage.setItem(APP.SESSION.EVENT, id);
+      try { localStorage.setItem(APP.LOCAL.LAST_EVENT, id); } catch {}
+    },
+
+    /** Dernier événement consulté, y compris hors de la session en cours (onglet fermé, cache vidé…). */
+    lastKnownEvent() {
+      try { return localStorage.getItem(APP.LOCAL.LAST_EVENT); } catch { return null; }
     },
 
     recordTally(id, hit, of) {
@@ -89,15 +95,100 @@ const State = (() => {
       return true;
     },
 
+    /**
+     * Total général. N'agrège que les événements du circuit RLCS officiel
+     * (canon !== false) : un tournoi hors-circuit (EWC, FIFAe…) n'entre
+     * pas dans le calcul du pourcentage global.
+     */
     grandTotal() {
       let hit = 0, of = 0;
       EVENTS.forEach(e => {
+        if (e.canon === false) return;
         if (e.tally?.of > 0) { hit += e.tally.hit; of += e.tally.of; }
       });
       if (!of) return null;
       return { hit, of, pct: Math.round((hit / of) * 100) };
     },
   };
+})();
+
+
+/* --------------------------------------------------------------------------
+   1bis. ROUTER — routes en #/..., pour des liens partageables et un vrai
+         retour arrière navigateur. Source de vérité : location.hash.
+   -------------------------------------------------------------------------- */
+
+const Router = (() => {
+
+  function parseHash() {
+    const raw = decodeURIComponent(location.hash.replace(/^#\/?/, ''));
+    const parts = raw.split('/').filter(Boolean);
+
+    if (parts[0] === 'event' && parts[1]) {
+      return { view: 'event', id: parts[1], stage: parts[2] ?? null };
+    }
+    if (parts[0] === 'season' && parts[1]) {
+      return { view: 'season', season: parts[1] };
+    }
+    return { view: 'home' };
+  }
+
+  function eventRoute(id, stage) {
+    return `#/event/${encodeURIComponent(id)}${stage ? '/' + encodeURIComponent(stage) : ''}`;
+  }
+  function seasonRoute(season) { return `#/season/${encodeURIComponent(season)}`; }
+  const homeRoute = '#/';
+
+  /** Navigation "normale" : pousse une entrée dans l'historique. */
+  function go(route) {
+    if (location.hash === route) { handle(); return; }
+    location.hash = route;
+  }
+
+  /** Résolution silencieuse : remplace l'entrée courante, sans polluer l'historique. */
+  function replace(route) {
+    history.replaceState(null, '', location.pathname + location.search + route);
+    handle();
+  }
+
+  function handle() {
+    const r = parseHash();
+
+    if (r.view === 'event' && State.find(r.id)) {
+      applyEvent(r.id, r.stage);
+      return;
+    }
+
+    if (r.view === 'season' && State.seasons().includes(r.season)) {
+      const pool  = State.inSeason(r.season);
+      const saved = State.current();
+      const pick  = pool.find(e => e.id === saved) ?? pool[0];
+      if (pick) { replace(eventRoute(pick.id)); return; }
+    }
+
+    applyHome();
+  }
+
+  function applyEvent(id, stage) {
+    const ev = State.find(id);
+    if (!ev) { applyHome(); return; }
+    State.setSeason(ev.season);
+    State.setCurrent(id);
+    Screen.buildRail();
+    Screen.goEvent(id);
+    if (stage) Screen.openStage(id, stage);
+  }
+
+  function applyHome() {
+    Screen.goHome();
+    Screen.buildRail();
+  }
+
+  function bind() {
+    window.addEventListener('hashchange', handle);
+  }
+
+  return { parseHash, eventRoute, seasonRoute, homeRoute, go, replace, handle, bind };
 })();
 
 
@@ -136,12 +227,47 @@ function kindLabel(kind) {
   return KIND_TEXT[kind] ?? 'Autre';
 }
 
+/** Un événement compte-t-il dans le circuit RLCS officiel ? (défaut : oui) */
+function isCanon(ev) {
+  return ev.canon !== false;
+}
+
 function logoFor(name) {
   if (!name) return null;
   if (TEAM_LOGOS[name]) return TEAM_LOGOS[name];
   const lower = name.toLowerCase();
   const key = Object.keys(TEAM_LOGOS).find(k => k.toLowerCase() === lower);
   return key ? TEAM_LOGOS[key] : null;
+}
+
+/**
+ * Un titre d'étape "3v3 — Play-In" se découpe en { group: '3v3', label: 'Play-In' }
+ * pour permettre un regroupement visuel (format) dans l'accordéon.
+ * Sans séparateur ' — ', le titre reste tel quel et group est null.
+ */
+function parseStageTitle(title) {
+  const parts = String(title).split(' — ');
+  return parts.length === 2 ? { group: parts[0], label: parts[1] } : { group: null, label: title };
+}
+
+/**
+ * L'étape "ALL" est une vue de synthèse : elle agrège automatiquement
+ * toutes les images des autres étapes de l'événement (+ ses propres
+ * images éventuelles, en tête), sans doublon. Rien à maintenir à la main
+ * quand une nouvelle étape est ajoutée.
+ */
+function resolveStageShots(stage, ev) {
+  if (stage.id !== 'ALL') return stage.shots ?? [];
+
+  const authored   = stage.shots ?? [];
+  const aggregated = ev.stages.filter(s => s.id !== 'ALL').flatMap(s => s.shots ?? []);
+
+  const seen = new Set();
+  return [...authored, ...aggregated].filter(sh => {
+    if (seen.has(sh.src)) return false;
+    seen.add(sh.src);
+    return true;
+  });
 }
 
 /** Jauge de boost segmentée réutilisable (tally, accueil…). */
@@ -156,6 +282,11 @@ function boostMeterHTML(pct, color, size = 10) {
  * Agrège toutes les stats nécessaires à la page d'accueil :
  * totaux par saison, par catégorie, meilleur/pire événement,
  * bilan des pronostics vainqueur, et prochain rendez-vous.
+ *
+ * Les totaux "par saison" et "meilleur/pire pronostic" n'incluent que
+ * les événements du circuit RLCS officiel (isCanon). Les événements
+ * hors-circuit (EWC, FIFAe…) restent visibles dans "par catégorie"
+ * (sous leur propre libellé) mais ne polluent pas le bilan saison.
  */
 function computeHomeStats() {
   const bySeason = {};
@@ -166,18 +297,23 @@ function computeHomeStats() {
 
   EVENTS.forEach(ev => {
     const season = String(ev.season);
-    bySeason[season] ??= { hit: 0, of: 0 };
     byKind[ev.kind]  ??= { hit: 0, of: 0 };
 
     if (ev.tally?.of > 0) {
-      bySeason[season].hit += ev.tally.hit;
-      bySeason[season].of  += ev.tally.of;
-      byKind[ev.kind].hit  += ev.tally.hit;
-      byKind[ev.kind].of   += ev.tally.of;
+      byKind[ev.kind].hit += ev.tally.hit;
+      byKind[ev.kind].of  += ev.tally.of;
 
-      const pct = pctOf(ev.tally);
-      if (!bestEv  || pct > bestEv.pct)  bestEv  = { ev, pct };
-      if (!worstEv || pct < worstEv.pct) worstEv = { ev, pct };
+      if (isCanon(ev)) {
+        bySeason[season] ??= { hit: 0, of: 0 };
+        bySeason[season].hit += ev.tally.hit;
+        bySeason[season].of  += ev.tally.of;
+
+        const pct = pctOf(ev.tally);
+        if (!bestEv  || pct > bestEv.pct)  bestEv  = { ev, pct };
+        if (!worstEv || pct < worstEv.pct) worstEv = { ev, pct };
+      }
+    } else {
+      bySeason[season] ??= { hit: 0, of: 0 };
     }
 
     if (ev.pick?.mine && ev.pick.mine !== 'TBD') {
@@ -371,7 +507,7 @@ const Blocks = {
    * @param {EventEntry} ev
    */
   shots(stage, ev) {
-    const shots = stage.shots ?? [];
+    const shots = resolveStageShots(stage, ev);
 
     if (!shots.length) {
       return `
@@ -410,13 +546,14 @@ const Blocks = {
    * @param {boolean} open
    */
   stageItem(stage, ev, open) {
+    const { label } = parseStageTitle(stage.title);
     return `
       <section class="stage-item${open ? ' is-open' : ''}" id="stage-${escAttr(ev.id)}-${escAttr(stage.id)}">
         <button type="button" class="stage-item-head" data-action="toggle-stage"
                 data-eid="${escAttr(ev.id)}" data-sid="${escAttr(stage.id)}"
                 aria-expanded="${open}">
-          <span class="stage-item-title">${escText(stage.title)}</span>
-          <span class="stage-item-count">${(stage.shots ?? []).length || '—'}</span>
+          <span class="stage-item-title">${escText(label)}</span>
+          <span class="stage-item-count">${resolveStageShots(stage, ev).length || '—'}</span>
           <span class="stage-item-caret" aria-hidden="true"></span>
         </button>
         <div class="stage-item-body">
@@ -432,10 +569,47 @@ const Blocks = {
   event(ev) {
     const upcoming = ev.state === 'soon';
 
-    const stages = ev.stages.map((st, i) => this.stageItem(st, ev, i === 0)).join('');
+    let lastGroup = null;
+    const stages = ev.stages.map((st) => {
+      const { group } = parseStageTitle(st.title);
+      const divider = (group && group !== lastGroup)
+        ? `<p class="stage-group-label">${escText(group)}</p>` : '';
+      lastGroup = group;
+      return divider + this.stageItem(st, ev, false);
+    }).join('');
+
+    const pool = State.inSeason(ev.season);
+    const idx  = pool.findIndex(e => e.id === ev.id);
+    const prevEv = idx > 0 ? pool[idx - 1] : null;
+    const nextEv = (idx > -1 && idx < pool.length - 1) ? pool[idx + 1] : null;
+
+    const breadcrumb = `
+      <nav class="breadcrumb" aria-label="Fil d'ariane">
+        <a href="${Router.homeRoute}">Accueil</a>
+        <span aria-hidden="true">/</span>
+        <a href="${Router.seasonRoute(ev.season)}">${ev.season}</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">${escText(ev.name)}</span>
+      </nav>`;
+
+    const pager = `
+      <nav class="event-pager" aria-label="Navigation entre événements">
+        ${prevEv
+          ? `<a class="event-pager-btn" href="${Router.eventRoute(prevEv.id)}"><span class="event-pager-dir">← Précédent</span><span class="event-pager-name">${escText(prevEv.name)}</span></a>`
+          : '<span class="event-pager-btn is-disabled"></span>'}
+        ${nextEv
+          ? `<a class="event-pager-btn is-next" href="${Router.eventRoute(nextEv.id)}"><span class="event-pager-dir">Suivant →</span><span class="event-pager-name">${escText(nextEv.name)}</span></a>`
+          : '<span class="event-pager-btn is-disabled"></span>'}
+      </nav>`;
+
+    const noncanonHTML = !isCanon(ev)
+      ? `<span class="tag tag-noncanon" title="Ne compte pas dans les statistiques du circuit RLCS">Hors-circuit</span>`
+      : '';
 
     return `
       <article class="event-panel" id="event-${escAttr(ev.id)}" data-season="${ev.season}" data-kind="${escAttr(ev.kind)}">
+
+        ${breadcrumb}
 
         <header class="event-head">
           <div class="event-head-banner">
@@ -451,6 +625,7 @@ const Blocks = {
                 <span class="tag tag-status" data-state="${escAttr(ev.state)}">
                   <span class="tag-dot" aria-hidden="true"></span>${STATUS_TEXT[ev.state] ?? ev.state}
                 </span>
+                ${noncanonHTML}
               </div>
               ${!upcoming ? this.pick(ev.pick) : ''}
             </div>
@@ -458,7 +633,13 @@ const Blocks = {
           </div>
         </header>
 
+        <div class="stage-toolbar">
+          <button type="button" class="stage-toolbar-btn" data-action="expand-all" data-eid="${escAttr(ev.id)}">Tout ouvrir</button>
+          <button type="button" class="stage-toolbar-btn" data-action="collapse-all" data-eid="${escAttr(ev.id)}">Tout fermer</button>
+        </div>
         <div class="stage-accordion">${stages}</div>
+
+        ${pager}
       </article>`;
   },
 
@@ -519,7 +700,7 @@ const Blocks = {
         </div>`;
     }).join('');
 
-    const kindOrder = ['major', 'worlds', 'qualifier', 'other'];
+    const kindOrder = ['major', 'worlds', 'lan', 'qualifier', 'other'];
     const kindRows = kindOrder
       .filter(k => stats.byKind[k])
       .map(kind => {
@@ -573,7 +754,7 @@ const Blocks = {
           <div class="home-hero-main">
             <p class="home-kicker" aria-hidden="true">Vue d'ensemble</p>
             <h1 class="home-title">Bilan des pronostics</h1>
-            <p class="home-sub">Toutes saisons et catégories confondues.</p>
+            <p class="home-sub">Circuit RLCS officiel — saisons et catégories confondues.</p>
           </div>
           ${heroHTML}
         </header>
@@ -604,6 +785,7 @@ const Blocks = {
 
 const Screen = (() => {
   const $ = id => document.getElementById(id);
+  let searchQuery = '';
 
   return {
 
@@ -670,6 +852,22 @@ const Screen = (() => {
       });
 
       list.replaceChildren(frag);
+      this.filterRail();
+    },
+
+    setSearch(query) {
+      searchQuery = query;
+      this.filterRail();
+    },
+
+    filterRail(query = searchQuery) {
+      const list = $('event-list');
+      if (!list) return;
+      const q = query.trim().toLowerCase();
+      list.querySelectorAll('.event-item').forEach(item => {
+        const name = item.querySelector('.event-item-name')?.textContent.toLowerCase() ?? '';
+        item.hidden = q.length > 0 && !name.includes(q);
+      });
     },
 
     refreshTally(id) {
@@ -735,6 +933,28 @@ const Screen = (() => {
       });
     },
 
+    /** Ouvre une étape précise (lien profond) et y défile. */
+    openStage(eid, sid) {
+      const panel  = $(`event-${eid}`);
+      const target = $(`stage-${eid}-${sid}`);
+      if (!panel || !target) return;
+      panel.querySelectorAll('.stage-item').forEach(item => {
+        const isTarget = item === target;
+        item.classList.toggle('is-open', isTarget);
+        item.querySelector('.stage-item-head')?.setAttribute('aria-expanded', String(isTarget));
+      });
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    },
+
+    setAllStages(eid, open) {
+      const panel = $(`event-${eid}`);
+      if (!panel) return;
+      panel.querySelectorAll('.stage-item').forEach(item => {
+        item.classList.toggle('is-open', open);
+        item.querySelector('.stage-item-head')?.setAttribute('aria-expanded', String(open));
+      });
+    },
+
     mount() {
       const stage = $('stage');
       if (!stage) return;
@@ -767,24 +987,16 @@ const Screen = (() => {
 const Actions = {
 
   goHome() {
-    Screen.goHome();
+    Router.go(Router.homeRoute);
   },
 
   goEvent(id) {
     if (!State.find(id)) return;
-    State.setCurrent(id);
-    Screen.goEvent(id);
+    Router.go(Router.eventRoute(id));
   },
 
   goSeason(season) {
-    State.setSeason(season);
-    Screen.goSeason(season);
-    Screen.buildRail();
-
-    const saved = State.current();
-    const pool  = State.inSeason(season);
-    const pick  = pool.find(e => e.id === saved) ?? pool[0];
-    if (pick) this.goEvent(pick.id);
+    Router.go(Router.seasonRoute(season));
   },
 
   editTally(id) {
@@ -823,23 +1035,35 @@ function wireEvents() {
   document.addEventListener('click', e => {
 
     const homeBtn = e.target.closest('#home-link');
-    if (homeBtn) { Actions.goHome(); return; }
+    if (homeBtn) { Actions.goHome(); Drawer.close(); return; }
 
     const gotoBtn = e.target.closest('[data-action="goto-event"]');
-    if (gotoBtn?.dataset.eid) {
-      Actions.goSeason(gotoBtn.dataset.season);
-      Actions.goEvent(gotoBtn.dataset.eid);
+    if (gotoBtn?.dataset.eid) { Actions.goEvent(gotoBtn.dataset.eid); return; }
+
+    const seasonBtn = e.target.closest('.season-opt');
+    if (seasonBtn) { Actions.goSeason(seasonBtn.dataset.season); Drawer.close(); return; }
+
+    const eventBtn = e.target.closest('.event-item');
+    if (eventBtn?.dataset.eid) { Actions.goEvent(eventBtn.dataset.eid); Drawer.close(); return; }
+
+    const stageHead = e.target.closest('[data-action="toggle-stage"]');
+    if (stageHead) {
+      const { eid, sid } = stageHead.dataset;
+      Screen.toggleStage(eid, sid);
+      const isOpen = document.getElementById(`stage-${eid}-${sid}`)?.classList.contains('is-open');
+      Router.replace(Router.eventRoute(eid, isOpen ? sid : null));
       return;
     }
 
-    const seasonBtn = e.target.closest('.season-opt');
-    if (seasonBtn) { Actions.goSeason(seasonBtn.dataset.season); return; }
+    const expandBtn = e.target.closest('[data-action="expand-all"]');
+    if (expandBtn?.dataset.eid) { Screen.setAllStages(expandBtn.dataset.eid, true); return; }
 
-    const eventBtn = e.target.closest('.event-item');
-    if (eventBtn?.dataset.eid) { Actions.goEvent(eventBtn.dataset.eid); return; }
-
-    const stageHead = e.target.closest('[data-action="toggle-stage"]');
-    if (stageHead) { Screen.toggleStage(stageHead.dataset.eid, stageHead.dataset.sid); return; }
+    const collapseBtn = e.target.closest('[data-action="collapse-all"]');
+    if (collapseBtn?.dataset.eid) {
+      Screen.setAllStages(collapseBtn.dataset.eid, false);
+      Router.replace(Router.eventRoute(collapseBtn.dataset.eid));
+      return;
+    }
 
     const card = e.target.closest('.shot-card');
     if (card) {
@@ -865,22 +1089,289 @@ function wireEvents() {
 
 
 /* --------------------------------------------------------------------------
+   7bis. TIROIR DE NAVIGATION MOBILE
+   -------------------------------------------------------------------------- */
+
+const Drawer = (() => {
+  const $ = id => document.getElementById(id);
+
+  function isOpen() { return $('rail')?.classList.contains('is-open') ?? false; }
+
+  function open() {
+    $('rail')?.classList.add('is-open');
+    $('rail-backdrop')?.removeAttribute('hidden');
+    $('mobile-toggle')?.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function close() {
+    if (!isOpen()) return;
+    $('rail')?.classList.remove('is-open');
+    $('rail-backdrop')?.setAttribute('hidden', '');
+    $('mobile-toggle')?.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }
+
+  function bind() {
+    $('mobile-toggle')?.addEventListener('click', () => (isOpen() ? close() : open()));
+    $('rail-backdrop')?.addEventListener('click', close);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+  }
+
+  return { open, close, bind };
+})();
+
+
+/* --------------------------------------------------------------------------
+   7ter. GÉNÉRATEUR D'ÉVÉNEMENT — outil maintenance, activé via ?admin
+   -------------------------------------------------------------------------- */
+
+const Admin = (() => {
+  const $ = id => document.getElementById(id);
+
+  function isEnabled() {
+    return new URLSearchParams(location.search).has('admin');
+  }
+
+  function slugify(s) {
+    return String(s)
+      .toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-+|-+$)/g, '');
+  }
+
+  function jsStr(s) {
+    return `'${String(s ?? '').replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
+  }
+
+  function shotRowHTML() {
+    return `
+      <div class="admin-shot" data-shot>
+        <input data-field="shot-src" placeholder="/img/xxx.png">
+        <input data-field="shot-caption" placeholder="Légende">
+        <input data-field="shot-flag" placeholder="Note (optionnel)">
+        <button type="button" class="admin-remove" data-action="admin-remove-shot">✕</button>
+      </div>`;
+  }
+
+  function stageBlockHTML() {
+    return `
+      <fieldset class="admin-stage" data-stage>
+        <legend>Étape <button type="button" class="admin-remove" data-action="admin-remove-stage">Retirer</button></legend>
+        <div class="admin-grid">
+          <label>Identifiant<input data-field="stage-id" placeholder="playoffs"></label>
+          <label>Titre<input data-field="stage-title" placeholder="Playoffs"></label>
+        </div>
+        <div class="admin-shots" data-shots>${shotRowHTML()}</div>
+        <button type="button" class="admin-add-shot" data-action="admin-add-shot">+ Ajouter une image</button>
+      </fieldset>`;
+  }
+
+  function formHTML() {
+    return `
+      <form id="admin-form" class="admin-form">
+        <div class="admin-grid">
+          <label>Nom de l'événement<input name="name" required placeholder="Esports World Cup 2026"></label>
+          <label>Identifiant (id)<input name="id" placeholder="auto-généré depuis le nom"></label>
+          <label>Saison<input name="season" value="2026" required></label>
+          <label>Type
+            <select name="kind">
+              <option value="major">Major</option>
+              <option value="worlds">Worlds</option>
+              <option value="lan">LAN</option>
+              <option value="qualifier">Qualifier</option>
+              <option value="other">Autre</option>
+            </select>
+          </label>
+          <label>Statut
+            <select name="state">
+              <option value="soon">À venir</option>
+              <option value="live">En cours</option>
+              <option value="done">Terminé</option>
+            </select>
+          </label>
+          <label>Hors-circuit RLCS (ne compte pas dans les stats)
+            <select name="canon">
+              <option value="true">Non — événement du circuit</option>
+              <option value="false">Oui — hors-circuit</option>
+            </select>
+          </label>
+          <label>Dates<input name="dates" placeholder="12–16 août 2026"></label>
+          <label>Bannière<input name="banner" placeholder="/img/xxx.png"></label>
+          <label>Mon pronostic (vainqueur)<input name="pickMine" placeholder="Karmine Corp"></label>
+          <label>Vainqueur réel<input name="pickActual" placeholder="laisser vide si inconnu"></label>
+          <label>Score juste<input name="tallyHit" type="number" min="0"></label>
+          <label>Score total<input name="tallyOf" type="number" min="0"></label>
+        </div>
+
+        <div class="admin-stages" id="admin-stages"></div>
+        <button type="button" class="admin-add-stage" data-action="admin-add-stage">+ Ajouter une étape</button>
+
+        <div class="admin-actions">
+          <button type="button" class="admin-generate" data-action="admin-generate">Générer le code</button>
+        </div>
+
+        <label class="admin-output-label">Code à coller dans EVENTS (id.js)
+          <textarea id="admin-output" class="admin-output" readonly rows="12" placeholder="Le code généré apparaîtra ici…"></textarea>
+        </label>
+        <button type="button" class="admin-copy" data-action="admin-copy">Copier</button>
+      </form>`;
+  }
+
+  function render() {
+    const body = $('admin-body');
+    if (!body) return;
+    body.innerHTML = formHTML();
+    $('admin-stages').insertAdjacentHTML('beforeend', stageBlockHTML());
+  }
+
+  function open() {
+    render();
+    $('admin-modal')?.classList.add('is-open');
+    $('admin-modal')?.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function close() {
+    $('admin-modal')?.classList.remove('is-open');
+    $('admin-modal')?.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  function readForm() {
+    const form = $('admin-form');
+    const val = n => form.querySelector(`[name="${n}"]`)?.value.trim() ?? '';
+
+    const stages = [...form.querySelectorAll('[data-stage]')].map(st => ({
+      id: st.querySelector('[data-field="stage-id"]')?.value.trim() || 'etape',
+      title: st.querySelector('[data-field="stage-title"]')?.value.trim() || 'Étape',
+      shots: [...st.querySelectorAll('[data-shot]')]
+        .map(sh => ({
+          src: sh.querySelector('[data-field="shot-src"]')?.value.trim() || '',
+          caption: sh.querySelector('[data-field="shot-caption"]')?.value.trim() || '',
+          flag: sh.querySelector('[data-field="shot-flag"]')?.value.trim() || '',
+        }))
+        .filter(sh => sh.src),
+    }));
+
+    return {
+      id: val('id'), name: val('name'), season: val('season') || '2026',
+      kind: val('kind') || 'other', state: val('state') || 'soon',
+      canon: val('canon') || 'true',
+      banner: val('banner'), dates: val('dates'),
+      pickMine: val('pickMine'), pickActual: val('pickActual'),
+      tallyHit: val('tallyHit'), tallyOf: val('tallyOf'),
+      stages,
+    };
+  }
+
+  function buildEventCode(f) {
+    const id = f.id || slugify(f.name);
+    const lines = [];
+
+    lines.push(`  {`);
+    lines.push(`    id: ${jsStr(id)}, name: ${jsStr(f.name)}, season: ${f.season}, kind: ${jsStr(f.kind)}, state: ${jsStr(f.state)},`);
+    if (f.canon === 'false') lines.push(`    canon: false,`);
+    lines.push(`    banner: ${jsStr(f.banner || '/img/placeholder.png')}, dates: ${jsStr(f.dates)},`);
+    lines.push(f.tallyOf ? `    tally: { hit: ${f.tallyHit || 0}, of: ${f.tallyOf} },` : `    tally: null,`);
+    lines.push(`    pick: { mine: ${jsStr(f.pickMine || 'TBD')}, actual: ${f.pickActual ? jsStr(f.pickActual) : 'null'} },`);
+    lines.push(`    stages: [`);
+
+    f.stages.forEach(st => {
+      lines.push(`      {`);
+      lines.push(`        id: ${jsStr(st.id)}, title: ${jsStr(st.title)},`);
+      lines.push(`        shots: [`);
+      st.shots.forEach(sh => {
+        const flagPart = sh.flag ? `, flag: ${jsStr(sh.flag)}` : '';
+        lines.push(`          { src: ${jsStr(sh.src)}, caption: ${jsStr(sh.caption)}${flagPart} },`);
+      });
+      lines.push(`        ],`);
+      lines.push(`      },`);
+    });
+
+    lines.push(`    ],`);
+    lines.push(`  },`);
+    return lines.join('\n');
+  }
+
+  function generate() {
+    const out = $('admin-output');
+    if (!out) return;
+    const f = readForm();
+    if (!f.name) { out.value = '// ⚠️ Le nom de l’événement est obligatoire.'; return; }
+    out.value = buildEventCode(f);
+  }
+
+  function copyOutput() {
+    const out = $('admin-output');
+    if (!out?.value) return;
+    navigator.clipboard?.writeText(out.value).then(() => {
+      const btn = document.querySelector('[data-action="admin-copy"]');
+      if (!btn) return;
+      const prev = btn.textContent;
+      btn.textContent = 'Copié !';
+      setTimeout(() => { btn.textContent = prev; }, 1400);
+    }).catch(() => {});
+  }
+
+  function bind() {
+    if (!isEnabled()) return;
+    $('admin-fab')?.removeAttribute('hidden');
+    $('admin-fab')?.addEventListener('click', open);
+
+    $('admin-modal')?.addEventListener('click', e => {
+      const action = e.target.closest('[data-action]')?.dataset.action;
+      if (!action) return;
+
+      if (action === 'admin-close')       close();
+      if (action === 'admin-add-stage')   $('admin-stages')?.insertAdjacentHTML('beforeend', stageBlockHTML());
+      if (action === 'admin-remove-stage') e.target.closest('[data-stage]')?.remove();
+      if (action === 'admin-add-shot')    e.target.closest('[data-stage]')?.querySelector('[data-shots]')
+                                             ?.insertAdjacentHTML('beforeend', shotRowHTML());
+      if (action === 'admin-remove-shot') e.target.closest('[data-shot]')?.remove();
+      if (action === 'admin-generate')    generate();
+      if (action === 'admin-copy')        copyOutput();
+    });
+
+    $('admin-modal')?.addEventListener('focusout', e => {
+      if (e.target?.name !== 'name') return;
+      const idInput = document.querySelector('#admin-form [name="id"]');
+      if (idInput && !idInput.value) idInput.value = slugify(e.target.value);
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && $('admin-modal')?.classList.contains('is-open')) close();
+    });
+  }
+
+  return { bind };
+})();
+
+
+/* --------------------------------------------------------------------------
    8. BOOT
    -------------------------------------------------------------------------- */
 
 function boot() {
   Screen.mount();
-  Screen.buildRail();
   Screen.buildTicker();
   Viewer.bind();
   wireEvents();
+  Router.bind();
+  Drawer.bind();
+  Admin.bind();
 
-  const saved = State.current();
-  const pool  = State.inSeason(State.season());
-  const start = (saved && pool.find(e => e.id === saved)) ? saved : pool[0]?.id;
-  if (start) State.setCurrent(start);
+  document.getElementById('event-search')?.addEventListener('input', e => {
+    Screen.setSearch(e.target.value);
+  });
 
-  Actions.goHome();
+  const saved = State.current() || State.lastKnownEvent();
+  if (!location.hash && saved && State.find(saved)) {
+    Router.replace(Router.eventRoute(saved));
+  } else {
+    Router.handle();
+  }
 }
 
 boot();
