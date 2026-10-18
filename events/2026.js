@@ -193,4 +193,32 @@ window.EVENTS.push(
       { id: 'ALL', title: 'ALL', shots: [] },
     ],
   },
+  {
+    id: 'knockout-series-2026',
+    name: 'KNOCKOUT SERIES',
+    season: 2026,
+    kind: 'other',
+    state: 'soon',
+    canon: false,
+    banner: '/img/RLCSpp.png',
+    dates: '20 octobre – 14 novembre 2026',
+
+    pick: {
+      mine: 'TBD',
+      actual: null,
+    },
+
+    stages: [
+      {
+        id: 'mainevent',
+        title: 'Main Event',
+        shots: [],
+      },
+      {
+        id: 'ALL',
+        title: 'ALL',
+        shots: [],
+      },
+    ],
+  },
 );
