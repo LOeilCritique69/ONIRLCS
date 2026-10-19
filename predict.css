@@ -1,0 +1,246 @@
+/* ==========================================================================
+   predict.css — Pronostics manuels d'OniRLCS (chargé après styles.css).
+   Réutilise les tokens et composants existants : .stage-toolbar-btn,
+   .stage-group-label, .modal, .admin-grid, .admin-generate, .pref-switch.
+   Densité compacte : une ligne par match.
+   ========================================================================== */
+
+/* Tag « Prono manuel » */
+.tag-custom { color: var(--orange-ink); }
+
+/* Rafraîchissement local d'une fiche : pas de fondu ni d'animations rejouées */
+.event-panel.is-active.no-anim { animation: none; }
+.no-anim *, .no-anim *::before, .no-anim *::after { animation: none !important; }
+
+
+/* Panneau ------------------------------------------------------------------ */
+
+.pred { display: flex; flex-direction: column; gap: .9rem; }
+
+.pred-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .4rem 1rem;
+}
+.pred-title { margin: 0; font: 700 1.12rem var(--f-body); }
+.pred-summary {
+  flex: 1 1 16rem;
+  min-width: 0;
+  margin: 0;
+  font: 600 .92rem var(--f-body);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-dim);
+}
+.pred-tools { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.pred-link { font: 600 .92rem var(--f-body); color: var(--blue); text-decoration: underline; text-underline-offset: 3px; }
+.pred-link:hover { color: var(--orange-ink); }
+
+.stage-toolbar-btn.pred-danger { border-color: var(--miss-ink); color: var(--miss-ink); }
+.stage-toolbar-btn.pred-danger:hover { background: var(--miss-solid); border-color: var(--miss-solid); color: #fff; }
+
+/* Ajout de match */
+.pred-add {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem;
+  padding: .7rem .9rem;
+  background: var(--paper-hi);
+  border: 1px dashed var(--rule-2);
+  border-radius: var(--radius);
+}
+.pred-add input, .pred-textarea, .admin-grid textarea {
+  padding: .5rem .65rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--rule-2);
+  background: var(--paper);
+  color: var(--ink);
+  font: 500 .98rem var(--f-body);
+}
+.pred-add input { flex: 1 1 140px; min-width: 0; }
+.pred-add-btn { padding: .5rem 1.1rem; font-size: .95rem; }
+
+.pred-bulk summary {
+  width: max-content;
+  cursor: pointer;
+  font: 600 .92rem var(--f-body);
+  color: var(--ink-dim);
+}
+.pred-bulk summary:hover { color: var(--blue); }
+.pred-bulk[open] summary { margin-bottom: .6rem; }
+.pred-bulk form { display: flex; flex-direction: column; align-items: flex-start; gap: .5rem; }
+.pred-textarea { width: 100%; resize: vertical; line-height: 1.45; }
+.pred-hint { margin: 0; font: 500 .88rem/1.45 var(--f-body); color: var(--ink-mut); }
+.pred-hint code {
+  padding: 0 .3rem;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  background: var(--paper-hi);
+  font: 600 .85rem ui-monospace, Menlo, Consolas, monospace;
+  color: var(--ink-dim);
+}
+
+.pred-empty {
+  padding: 1.6rem 1rem;
+  border: 1px dashed var(--rule-2);
+  border-radius: 6px;
+  text-align: center;
+  font: 600 .98rem var(--f-body);
+  color: var(--ink-dim);
+}
+
+
+/* Liste de matchs ---------------------------------------------------------- */
+
+.pred-list { display: flex; flex-direction: column; gap: .35rem; }
+.pred-list > .stage-group-label { margin-top: 1.1rem; margin-bottom: .1rem; }
+.pred-list > .stage-group-label:first-child { margin-top: 0; }
+
+.pm {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) 6.4rem auto;
+  align-items: center;
+  gap: .5rem;
+  padding: .35rem .5rem .35rem .6rem;
+  background: var(--paper-hi);
+  border-left: 4px solid var(--rule-2);
+}
+.pm[data-verdict="pending"] { border-left-color: var(--orange); }
+.pm[data-verdict="hit"]     { border-left-color: var(--go); }
+.pm[data-verdict="miss"]    { border-left-color: var(--miss); }
+
+.pm-vs { font: 600 .85rem var(--f-body); color: var(--ink-mut); }
+
+.pm-cell { display: flex; align-items: stretch; gap: .3rem; min-width: 0; }
+
+.pm-pick {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  min-width: 0;
+  padding: .42rem .7rem;
+  border: 1px solid var(--rule-2);
+  border-radius: var(--radius);
+  background: transparent;
+  text-align: left;
+  font: 700 1rem var(--f-body);
+  transition: background .12s ease, border-color .12s ease;
+}
+.pm-pick:hover:not(:disabled) { border-color: var(--orange); background: rgba(226, 103, 58, .08); }
+.pm-pick:disabled { cursor: default; opacity: .6; }
+.pm-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pm-logo { width: 22px; height: 22px; object-fit: contain; flex-shrink: 0; }
+
+.pm-cell.is-pick .pm-pick {
+  border-color: var(--orange);
+  background: rgba(226, 103, 58, .12);
+  color: var(--orange-ink);
+  box-shadow: inset 4px 0 0 var(--orange);
+  opacity: 1;
+}
+
+.pm-win {
+  width: 2rem;
+  flex-shrink: 0;
+  border: 1px solid var(--rule-2);
+  border-radius: var(--radius);
+  background: transparent;
+  font: 700 .95rem var(--f-body);
+  color: var(--ink-mut);
+  transition: background .12s ease, border-color .12s ease, color .12s ease;
+}
+.pm-win:hover { border-color: var(--blue); color: var(--blue); }
+.pm-win[aria-pressed="true"] { background: var(--blue-fill); border-color: var(--blue-fill); color: var(--on-blue); }
+
+.pm-stampbox { display: flex; justify-content: flex-end; }
+.pm-stamp {
+  padding: .12rem .45rem;
+  border: 2px solid currentColor;
+  border-radius: 3px;
+  font: 700 .76rem/1.2 var(--f-body);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  transform: rotate(-3deg);
+  white-space: nowrap;
+}
+.pm[data-verdict="hit"]     .pm-stamp { color: var(--go-ink); }
+.pm[data-verdict="miss"]    .pm-stamp { color: var(--miss-ink); }
+.pm[data-verdict="pending"] .pm-stamp { color: var(--ink-mut); border-style: dashed; }
+.pm[data-verdict="none"]    .pm-stamp { color: var(--ink-mut); border-style: dotted; }
+
+.pm-del {
+  width: 1.9rem;
+  height: 1.9rem;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  font-size: .85rem;
+  color: var(--ink-mut);
+}
+.pm-del:hover { background: var(--miss-solid); color: #fff; }
+
+
+/* Éditeur ------------------------------------------------------------------ */
+
+.pred-span2 { grid-column: 1 / -1; }
+.pred-bulk-label { display: flex; flex-direction: column; gap: .3rem; font: 600 .92rem var(--f-body); color: var(--ink-dim); }
+.pred-actions { display: flex; flex-wrap: wrap; gap: .6rem; }
+.modal [hidden] { display: none !important; }
+
+
+/* Rail & réglages ---------------------------------------------------------- */
+
+.rail-add {
+  width: 100%;
+  margin-top: .8rem;
+  padding: .45rem .9rem;
+  border: 1px dashed rgba(233, 238, 236, .5);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--on-blue);
+  font: 600 .95rem var(--f-body);
+  transition: background .12s ease, color .12s ease, border-color .12s ease;
+}
+.rail-add:hover { background: var(--on-blue); border-color: var(--on-blue); color: var(--blue-fill); }
+
+.pref-data { display: flex; flex-wrap: wrap; gap: .5rem; }
+.pref-hint { margin: .5rem 0 0; font: 500 .86rem/1.4 var(--f-body); color: var(--ink-mut); }
+
+
+/* Toast -------------------------------------------------------------------- */
+
+.pred-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 1.4rem;
+  z-index: 1300;
+  max-width: min(92vw, 520px);
+  padding: .65rem 1.1rem;
+  border-radius: 6px;
+  background: var(--ink);
+  color: var(--paper-hi);
+  font: 600 .95rem/1.4 var(--f-body);
+  transform: translateX(-50%);
+  animation: fade .18s ease;
+}
+.pred-toast[hidden] { display: none; }
+
+
+/* Responsive --------------------------------------------------------------- */
+
+/* styles.css déclare ce repli mobile AVANT la règle de base, qui l'écrasait : on le remet ici
+   (corrige aussi le générateur ?admin sur petit écran). */
+@media (max-width: 860px) {
+  .admin-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 720px) {
+  .pred-add input, .pred-add-btn { flex: 1 1 100%; }
+  .pred-add .pm-vs { display: none; }
+  .pm { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); row-gap: .35rem; }
+  .pm-stampbox { grid-column: 1 / 3; justify-content: flex-start; }
+  .pm-del { justify-self: end; }
+  .pred-toast { bottom: 5rem; }
+}

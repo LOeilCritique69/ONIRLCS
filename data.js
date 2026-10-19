@@ -1,6 +1,7 @@
 /* ==========================================================================
    app.js (data.js) — Moteur de l'application OniRLCS.
-   Dépend de id.js (APP, STATUS_TEXT, KIND_TEXT, TEAM_LOGOS, EVENTS).
+   Dépend de id.js (APP, STATUS_TEXT, KIND_TEXT, TEAM_LOGOS, EVENTS) et de
+   predict.js (Predict : tournois manuels, injectés dans EVENTS avant State).
 
    Sommaire :
      1. State    — source de vérité (tallies, saison/événement actifs)
@@ -49,7 +50,33 @@ const State = (() => {
   return {
     find(id) { return byId.get(id); },
 
+    /** Ajoute un événement créé à l'exécution (tournoi manuel). */
+    register(ev) {
+      byId.set(ev.id, ev);
+      if (!EVENTS.includes(ev)) EVENTS.push(ev);
+    },
+
+    /** Retire un événement créé à l'exécution. */
+    unregister(id) {
+      const ev = byId.get(id);
+      byId.delete(id);
+      const i = EVENTS.indexOf(ev);
+      if (i > -1) EVENTS.splice(i, 1);
+    },
+
     inSeason(season) { return EVENTS.filter(e => String(e.season) === String(season)); },
+
+    /**
+     * Tous les événements dans l'ordre chronologique : par saison, puis
+     * dans l'ordre de déclaration au sein de chaque saison. Sert à la
+     * navigation précédent/suivant, qui doit franchir les changements d'année.
+     */
+    chrono() {
+      return EVENTS
+        .map((e, i) => [e, i])
+        .sort((a, b) => (Number(a[0].season) - Number(b[0].season)) || (a[1] - b[1]))
+        .map(([e]) => e);
+    },
 
     seasons() { return [...new Set(EVENTS.map(e => String(e.season)))]; },
 
@@ -74,7 +101,7 @@ const State = (() => {
 
     recordTally(id, hit, of) {
       const ev = byId.get(id);
-      if (!ev) return false;
+      if (!ev || ev.custom) return false;   // le score d'un tournoi manuel se déduit de ses matchs
 
       const h = Math.max(0, Math.floor(Number(hit)));
       const o = Math.max(0, Math.floor(Number(of)));
@@ -151,6 +178,17 @@ const Router = (() => {
     handle();
   }
 
+  /* Dernière vue affichée : on ne remonte en haut que quand la page CHANGE
+     (pas quand on ouvre/ferme une étape, qui réécrit aussi le hash). */
+  let lastView = null;
+  function arrive(key, deepLink) {
+    const changed = key !== lastView;
+    lastView = key;
+    if (!changed || deepLink) return;
+    window.scrollTo({ top: 0, behavior: 'auto' });
+    document.getElementById('stage')?.focus({ preventScroll: true });
+  }
+
   function handle() {
     const r = parseHash();
 
@@ -176,12 +214,14 @@ const Router = (() => {
     State.setCurrent(id);
     Screen.buildRail();
     Screen.goEvent(id);
+    arrive(`event:${id}`, Boolean(stage));
     if (stage) Screen.openStage(id, stage);
   }
 
   function applyHome() {
     Screen.goHome();
     Screen.buildRail();
+    arrive('home', false);
   }
 
   function bind() {
@@ -275,7 +315,7 @@ function boostMeterHTML(pct, color, size = 10) {
   const segments = Array.from({ length: size }, (_, i) =>
     `<span class="boost-seg${i < Math.round((pct / 100) * size) ? ' is-lit' : ''}" style="--seg-color:${color}"></span>`
   ).join('');
-  return `<div class="boost-meter" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100">${segments}</div>`;
+  return `<div class="boost-meter" role="progressbar" aria-label="Taux de réussite" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100" aria-valuetext="${pct} %">${segments}</div>`;
 }
 
 /**
@@ -441,6 +481,9 @@ const Blocks = {
       if (state === 'soon') {
         return `<div class="tally-box" data-eid="${escAttr(id)}"><p class="tally-empty">Pas encore joué</p></div>`;
       }
+      if (ev.custom) {
+        return `<div class="tally-box" data-eid="${escAttr(id)}"><p class="tally-empty">Aucun prono résolu pour l'instant</p></div>`;
+      }
       const msg = state === 'live' ? 'En cours de résolution' : 'Score non saisi';
       return `
         <div class="tally-box" data-eid="${escAttr(id)}">
@@ -526,11 +569,11 @@ const Blocks = {
     const tagCls  = ev.state === 'live' ? 'is-live' : 'is-done';
 
     const cards = shots.map((shot, i) => `
-      <button type="button" class="shot-card" data-shots-key="${escAttr(key)}" data-shot-index="${i}"
-              aria-label="Agrandir : ${escAttr(shot.caption ?? '')}">
+      <button type="button" class="shot-card" data-shots-key="${escAttr(key)}" data-shot-index="${i}">
+        <span class="sr-only">Agrandir l'image : </span>
         <span class="shot-tag ${tagCls}">${tagText}</span>
         <span class="shot-thumb">
-          <img src="${escAttr(shot.src)}" alt="${escAttr(shot.caption ?? '')}" loading="lazy">
+          <img src="${escAttr(shot.src)}" alt="" loading="lazy">
         </span>
         <span class="shot-caption">${escText(shot.caption ?? '')}</span>
         ${this.flag(shot.flag)}
@@ -567,7 +610,8 @@ const Blocks = {
    * @param {EventEntry} ev
    */
   event(ev) {
-    const upcoming = ev.state === 'soon';
+    // Un tournoi manuel garde son bloc pronostic même sans résultat : c'est là qu'on prépare ses pronos.
+    const upcoming = ev.state === 'soon' && !ev.custom;
 
     let lastGroup = null;
     const stages = ev.stages.map((st) => {
@@ -578,7 +622,9 @@ const Blocks = {
       return divider + this.stageItem(st, ev, false);
     }).join('');
 
-    const pool = State.inSeason(ev.season);
+    // Navigation précédent / suivant sur TOUT le calendrier : le dernier événement
+    // d'une année propose le premier de l'année suivante, et inversement.
+    const pool = State.chrono();
     const idx  = pool.findIndex(e => e.id === ev.id);
     const prevEv = idx > 0 ? pool[idx - 1] : null;
     const nextEv = (idx > -1 && idx < pool.length - 1) ? pool[idx + 1] : null;
@@ -592,19 +638,43 @@ const Blocks = {
         <span aria-current="page">${escText(ev.name)}</span>
       </nav>`;
 
+    /** Un bouton du pager ; signale clairement le passage à une autre saison. */
+    const pagerBtn = (target, dir, cls) => {
+      if (!target) return '<span class="event-pager-btn is-disabled" aria-hidden="true"></span>';
+      const jump = String(target.season) !== String(ev.season);
+      const seasonNote = jump
+        ? `<span class="event-pager-season">${dir === 'next' ? 'Saison suivante' : 'Saison précédente'} · ${escText(target.season)}</span>`
+        : '';
+      const label = dir === 'next' ? 'Suivant →' : '← Précédent';
+      return `<a class="event-pager-btn${cls}${jump ? ' is-season-jump' : ''}" href="${Router.eventRoute(target.id)}">`
+           + `<span class="event-pager-dir">${label}</span>`
+           + `<span class="event-pager-name">${escText(target.name)}</span>`
+           + seasonNote
+           + `</a>`;
+    };
+
     const pager = `
       <nav class="event-pager" aria-label="Navigation entre événements">
-        ${prevEv
-          ? `<a class="event-pager-btn" href="${Router.eventRoute(prevEv.id)}"><span class="event-pager-dir">← Précédent</span><span class="event-pager-name">${escText(prevEv.name)}</span></a>`
-          : '<span class="event-pager-btn is-disabled"></span>'}
-        ${nextEv
-          ? `<a class="event-pager-btn is-next" href="${Router.eventRoute(nextEv.id)}"><span class="event-pager-dir">Suivant →</span><span class="event-pager-name">${escText(nextEv.name)}</span></a>`
-          : '<span class="event-pager-btn is-disabled"></span>'}
+        ${pagerBtn(prevEv, 'prev', '')}
+        ${pagerBtn(nextEv, 'next', ' is-next')}
       </nav>`;
 
     const noncanonHTML = !isCanon(ev)
       ? `<span class="tag tag-noncanon" title="Ne compte pas dans les statistiques du circuit RLCS">Hors-circuit</span>`
       : '';
+    const customHTML = ev.custom
+      ? `<span class="tag tag-custom" title="Pronostics saisis à la main sur ce site">Prono manuel</span>`
+      : '';
+
+    // Tournoi manuel : panneau de matchs à pronostiquer ; sinon : captures par étape.
+    const body = ev.custom
+      ? Predict.panelHTML(ev)
+      : `
+        <div class="stage-toolbar">
+          <button type="button" class="stage-toolbar-btn" data-action="expand-all" data-eid="${escAttr(ev.id)}">Tout ouvrir</button>
+          <button type="button" class="stage-toolbar-btn" data-action="collapse-all" data-eid="${escAttr(ev.id)}">Tout fermer</button>
+        </div>
+        <div class="stage-accordion">${stages}</div>`;
 
     return `
       <article class="event-panel" id="event-${escAttr(ev.id)}" data-season="${ev.season}" data-kind="${escAttr(ev.kind)}">
@@ -626,6 +696,7 @@ const Blocks = {
                   <span class="tag-dot" aria-hidden="true"></span>${STATUS_TEXT[ev.state] ?? ev.state}
                 </span>
                 ${noncanonHTML}
+                ${customHTML}
               </div>
               ${!upcoming ? this.pick(ev.pick) : ''}
             </div>
@@ -633,11 +704,7 @@ const Blocks = {
           </div>
         </header>
 
-        <div class="stage-toolbar">
-          <button type="button" class="stage-toolbar-btn" data-action="expand-all" data-eid="${escAttr(ev.id)}">Tout ouvrir</button>
-          <button type="button" class="stage-toolbar-btn" data-action="collapse-all" data-eid="${escAttr(ev.id)}">Tout fermer</button>
-        </div>
-        <div class="stage-accordion">${stages}</div>
+        ${body}
 
         ${pager}
       </article>`;
@@ -813,10 +880,11 @@ const Screen = (() => {
       if (!list) return;
 
       const frag = document.createDocumentFragment();
+      const onHome = $('home-panel')?.classList.contains('is-active') ?? false;
 
       State.inSeason(State.season()).forEach(ev => {
         const pct    = pctOf(ev.tally);
-        const active = ev.id === State.current();
+        const active = !onHome && ev.id === State.current();
 
         const item = document.createElement('button');
         item.type = 'button';
@@ -912,6 +980,12 @@ const Screen = (() => {
     },
 
     goHome() {
+      const oldHome = $('home-panel');
+      if (oldHome) {
+        const tpl = document.createElement('template');
+        tpl.innerHTML = Blocks.home().trim();
+        oldHome.replaceWith(tpl.content.firstElementChild);
+      }
       document.querySelectorAll('.season-panel').forEach(p => p.classList.remove('is-active'));
       document.querySelectorAll('.season-opt').forEach(b => {
         b.classList.remove('is-active');
@@ -972,8 +1046,11 @@ const Screen = (() => {
 
       document.querySelectorAll('.season-opt').forEach(b => {
         const isActive = b.dataset.season === active;
+        const empty    = !State.inSeason(b.dataset.season).length;
         b.classList.toggle('is-active', isActive);
         b.setAttribute('aria-pressed', String(isActive));
+        b.disabled = empty;
+        b.title    = empty ? 'Aucun événement pour cette saison' : '';
       });
     },
   };
