@@ -1672,4 +1672,65 @@ kbd {
   flex-shrink: 0;
 }
 
+/* ==========================================================================
+   KNOCKOUT SERIES — D.A Spécifique (Cage Octogone & Rouge Métallique)
+   ========================================================================== */
+
+/* Thème dédié aux événements Knockout */
+[data-pid="knockout-series-2026"],
+.pred[data-pid="knockout-series-2026"] {
+  --orange: #dc2626;         /* Rouge vif octogone */
+  --orange-ink: #ef4444;
+  --blue-fill: #18090a;      /* Fond sombre teinté de rouge */
+  --edge: #991b1b;           /* Bordures métalliques sang */
+}
+
+/* Style de badge biseauté façon octogone */
+[data-pid="knockout-series-2026"] .table-header {
+  background: linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%);
+  border-bottom: 3px solid #ef4444;
+  clip-path: polygon(12px 0, calc(100% - 12px) 0, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 12px 100%, 0 calc(100% - 12px), 0 12px);
+}
+
+/* En-tête des rondes (Nights / Main Event) */
+[data-pid="knockout-series-2026"] .bracket-round-title {
+  background: #7f1d1d;
+  color: #fef2f2;
+  border-left: 3px solid #ef4444;
+  font-family: var(--f-display);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Matchs en mode "Cage Match" */
+[data-pid="knockout-series-2026"] .matchup {
+  border: 2px solid #7f1d1d;
+  background-image: 
+    radial-gradient(rgba(239, 68, 68, 0.15) 1px, transparent 0),
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 16px 16px, 8px 8px;
+}
+
+[data-pid="knockout-series-2026"] .team-btn:hover:not(:disabled) {
+  background: #991b1b !important;
+  color: #ffffff !important;
+}
+
+/* Main Event Highlight */
+[data-pid="knockout-series-2026"] .matchup[data-mid*="main"] {
+  box-shadow: 0 0 12px rgba(220, 38, 38, 0.4);
+  border-color: #ef4444;
+}
+
+[data-pid="knockout-series-2026"] .matchup[data-mid*="main"]::before {
+  content: 'MAIN EVENT';
+  display: block;
+  background: #ef4444;
+  color: #000;
+  font: 800 0.65rem var(--f-display);
+  text-align: center;
+  letter-spacing: 0.1em;
+  padding: 1px 0;
+}
+
 .team-display { cursor: default; }

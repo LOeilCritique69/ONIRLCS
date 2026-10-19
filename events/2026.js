@@ -244,26 +244,32 @@ window.EVENTS.push(
     kind: 'other',
     state: 'soon',
     canon: false,
-    banner: '/img/RLCSpp.png',
+    banner: '/img/Predator_Solo_Cup_2025.png', // Ou ton logo Knockout
     dates: '20 octobre – 14 novembre 2026',
-    source: 'https://liquipedia.net/rocketleague/KNOCKOUT_SERIES/2026',
+    source: 'https://twitch.tv/fuury_off',
     tally: null,
-    pick: { mine: 'Mawkzy', actual: null },
+    pick: { mine: null, actual: null },
     stages: [],
     custom: true,
     matches: [
-      /* --- QUARTS DE FINALE --- */
-      { id: 'm201', stage: 'Quarts de finale', a: 'TBD', b: 'TBD', pick: null, actual: null, pickedAt: null },
-      { id: 'm202', stage: 'Quarts de finale', a: 'TBD', b: 'TBD', pick: null, actual: null, pickedAt: null },
-      { id: 'm203', stage: 'Quarts de finale', a: 'TBD', b: 'TBD', pick: null, actual: null, pickedAt: null },
-      { id: 'm204', stage: 'Quarts de finale', a: 'TBD', b: 'TBD', pick: null, actual: null, pickedAt: null },
+      /* --- SOIRÉE #1 (20 OCT) --- */
+      { id: 'ks-n1-m1', stage: 'Night #1 — Regular', a: 'Contender #5', b: 'Contender #6', pick: null, actual: null, format: 'Bo5' },
+      { id: 'ks-n1-m2', stage: 'Night #1 — Regular', a: 'Contender #3', b: 'Contender #4', pick: null, actual: null, format: 'Bo5' },
+      { id: 'ks-n1-m3', stage: 'Night #1 — Regular', a: 'Contender #1', b: 'Contender #2', pick: null, actual: null, format: 'Bo5' },
+      { id: 'ks-n1-main', stage: 'Night #1 — Main Event', a: 'Champion', b: 'Challenger', pick: null, actual: null, format: 'Bo7' },
 
-      /* --- DEMI-FINALES --- */
-      { id: 'm205', stage: 'Demi-finales', a: 'TBD', b: 'TBD', pick: null, actual: null, pickedAt: null },
-      { id: 'm206', stage: 'Demi-finales', a: 'TBD', b: 'TBD', pick: null, actual: null, pickedAt: null },
+      /* --- SOIRÉES #2 À #7 (RÉGULIERES) --- */
+      { id: 'ks-n2-main', stage: 'Night #2 (24 Oct)', a: 'Champion', b: 'Challenger', pick: null, actual: null, format: 'Bo7' },
+      { id: 'ks-n3-main', stage: 'Night #3 (27 Oct)', a: 'Champion', b: 'Challenger', pick: null, actual: null, format: 'Bo7' },
+      { id: 'ks-n4-main', stage: 'Night #4 (31 Oct)', a: 'Champion', b: 'Challenger', pick: null, actual: null, format: 'Bo7' },
+      { id: 'ks-n5-main', stage: 'Night #5 (03 Nov)', a: 'Champion', b: 'Challenger', pick: null, actual: null, format: 'Bo7' },
+      { id: 'ks-n6-main', stage: 'Night #6 (07 Nov)', a: 'Champion', b: 'Challenger', pick: null, actual: null, format: 'Bo7' },
+      { id: 'ks-n7-main', stage: 'Night #7 (10 Nov)', a: 'Champion', b: 'Challenger', pick: null, actual: null, format: 'Bo7' },
 
-      /* --- FINALE --- */
-      { id: 'm207', stage: 'Finale', a: 'TBD', b: 'TBD', pick: null, actual: null, pickedAt: null }
+      /* --- PLAYOFFS NIGHT #8 (14 NOV) — TOP 4 --- */
+      { id: 'ks-po-sf1', stage: 'Night #8 — Demi-finale 1', a: 'Seed #1', b: 'Seed #4', pick: null, actual: null, format: 'Bo7' },
+      { id: 'ks-po-sf2', stage: 'Night #8 — Demi-finale 2', a: 'Seed #2', b: 'Seed #3', pick: null, actual: null, format: 'Bo7' },
+      { id: 'ks-po-final', stage: 'Night #8 — Grande Finale', a: 'TBD', b: 'TBD', pick: null, actual: null, format: 'Bo7' }
     ]
   },
 );
