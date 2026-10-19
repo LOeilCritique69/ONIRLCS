@@ -94,6 +94,7 @@ const TEAM_LOGOS = Object.freeze({
   'Wildcard':           '/teams/WILD.png',
   'NMJF':               '/teams/Default.png',
   'Mawk':               '/teams/France.png',
+  'Mawkzy':               '/teams/France.png',
   'GiuK':               '/teams/France.png',
   'rust ez95':          '/teams/France.png',
   'Mozzarella':         '/teams/France.png',

@@ -194,6 +194,50 @@ window.EVENTS.push(
     ],
   },
   {
+    id: 'rocket-baguette-solo-2026',
+    name: 'Rocket Baguette — Predator Solo Cup',
+    season: 2026,
+    kind: 'lan',
+    state: 'live',
+    canon: true,
+    banner: '/img/Predator_Solo_Cup_2025.png',
+    dates: '24–25 octobre 2026',
+    source: 'https://liquipedia.net/rocketleague/Rocket_Baguette/Predator_Solo_Cup/2026#Results',
+    tally: null,
+    pick: { mine: 'Mawkzy', actual: null },
+    stages: [],
+    custom: true,
+    matches: [
+      {
+        id: 'm101',
+        stage: 'Demi-finales',
+        a: 'Mawkzy',
+        b: 'GiuK',
+        pick: 'a',      // Ton prono : Mawkzy
+        actual: null,   // Résultat réel pas encore joué
+        pickedAt: 1761264000000
+      },
+      {
+        id: 'm102',
+        stage: 'Demi-finales',
+        a: 'rust ez95',
+        b: 'Mozzarella',
+        pick: 'b',      // Ton prono : Mozzarella
+        actual: null,
+        pickedAt: 1761264000000
+      },
+      {
+        id: 'm103',
+        stage: 'Finale',
+        a: 'TBD',       // Officiellement pas encore déterminé
+        b: 'TBD',
+        pick: 'a',      // Ton prono pour la finale
+        actual: null,
+        pickedAt: 1761265000000
+      }
+    ]
+  },
+  {
     id: 'knockout-series-2026',
     name: 'KNOCKOUT SERIES',
     season: 2026,
@@ -202,23 +246,24 @@ window.EVENTS.push(
     canon: false,
     banner: '/img/RLCSpp.png',
     dates: '20 octobre – 14 novembre 2026',
+    source: 'https://liquipedia.net/rocketleague/KNOCKOUT_SERIES/2026',
+    tally: null,
+    pick: { mine: 'Mawkzy', actual: null },
+    stages: [],
+    custom: true,
+    matches: [
+      /* --- QUARTS DE FINALE --- */
+      { id: 'm201', stage: 'Quarts de finale', a: 'TBD', b: 'TBD', pick: null, actual: null, pickedAt: null },
+      { id: 'm202', stage: 'Quarts de finale', a: 'TBD', b: 'TBD', pick: null, actual: null, pickedAt: null },
+      { id: 'm203', stage: 'Quarts de finale', a: 'TBD', b: 'TBD', pick: null, actual: null, pickedAt: null },
+      { id: 'm204', stage: 'Quarts de finale', a: 'TBD', b: 'TBD', pick: null, actual: null, pickedAt: null },
 
-    pick: {
-      mine: 'TBD',
-      actual: null,
-    },
+      /* --- DEMI-FINALES --- */
+      { id: 'm205', stage: 'Demi-finales', a: 'TBD', b: 'TBD', pick: null, actual: null, pickedAt: null },
+      { id: 'm206', stage: 'Demi-finales', a: 'TBD', b: 'TBD', pick: null, actual: null, pickedAt: null },
 
-    stages: [
-      {
-        id: 'mainevent',
-        title: 'Main Event',
-        shots: [],
-      },
-      {
-        id: 'ALL',
-        title: 'ALL',
-        shots: [],
-      },
-    ],
+      /* --- FINALE --- */
+      { id: 'm207', stage: 'Finale', a: 'TBD', b: 'TBD', pick: null, actual: null, pickedAt: null }
+    ]
   },
 );
